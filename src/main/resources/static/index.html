@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Story of a Lifetime</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      background: #f5f4f0;
+      color: #1a1a1a;
+      min-height: 100vh;
+      padding: 32px 20px 60px;
+    }
+
+    .app {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .app-header { margin-bottom: 4px; }
+    .app-header h1 { font-size: 20px; font-weight: 600; }
+    .app-header p  { font-size: 13px; color: #888; margin-top: 4px; }
+
+    .card {
+      background: #fff;
+      border: 0.5px solid #ddd;
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 14px;
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-group label {
+      font-size: 12px;
+      color: #666;
+    }
+
+    textarea, select {
+      width: 100%;
+      border: 0.5px solid #ddd;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-family: inherit;
+      color: #1a1a1a;
+      background: #fafafa;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    textarea { resize: vertical; }
+
+    textarea:focus, select:focus {
+      outline: none;
+      border-color: #999;
+      background: #fff;
+    }
+
+    .controls-row {
+      display: grid;
+      grid-template-columns: 2fr 1.2fr 1fr auto;
+      gap: 16px;
+      align-items: end;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .control-group label {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slider-wrap input[type=range] {
+      flex: 1;
+      accent-color: #1a1a1a;
+    }
+
+    .slider-val {
+      font-size: 13px;
+      font-weight: 500;
+      min-width: 28px;
+      text-align: right;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .pill {
+      padding: 5px 14px;
+      border-radius: 20px;
+      border: 0.5px solid #ddd;
+      font-size: 12px;
+      cursor: pointer;
+      background: #fafafa;
+      color: #555;
+      user-select: none;
+      transition: background 0.1s, color 0.1s;
+    }
+
+    .pill.active {
+      background: #1a1a1a;
+      color: #fff;
+      border-color: #1a1a1a;
+    }
+
+    .generate-btn {
+      padding: 10px 24px;
+      background: #1a1a1a;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      height: 38px;
+      transition: background 0.15s, opacity 0.15s;
+    }
+
+    .generate-btn:hover    { background: #333; }
+    .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .story-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .badge {
+      font-size: 11px;
+      background: #eaf3de;
+      color: #3b6d11;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .divider {
+      height: 0.5px;
+      background: #e8e8e8;
+      margin-bottom: 18px;
+    }
+
+    .story-text {
+      font-size: 14px;
+      line-height: 1.85;
+      color: #2a2a2a;
+    }
+
+    .story-text p            { margin-bottom: 16px; }
+    .story-text p:last-child { margin-bottom: 0; }
+
+    .placeholder {
+      font-size: 13px;
+      color: #bbb;
+      font-style: italic;
+    }
+
+    .error-text {
+      font-size: 13px;
+      color: #a32d2d;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #fff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 640px) {
+      .input-grid    { grid-template-columns: 1fr; }
+      .controls-row  { grid-template-columns: 1fr 1fr; }
+      .generate-btn  { grid-column: 1 / -1; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <div class="app-header">
+    <h1>Story of a Lifetime</h1>
+    <p>Generate a life story from a start state to an end state, guided by facts</p>
+  </div>
+
+  <!-- Story Setup -->
+  <div class="card">
+    <div class="section-label">Story setup</div>
+    <div class="input-grid">
+      <div class="input-group">
+        <label for="startState">Start state</label>
+        <textarea id="startState" rows="2">John was born in an orphanage in Texas in 1975.</textarea>
+      </div>
+      <div class="input-group">
+        <label for="endState">End state</label>
+        <textarea id="endState" rows="2">John was confirmed as Health Minister for the new government in India.</textarea>
+      </div>
+    </div>
+    <div class="input-group">
+      <label for="facts">Facts <span style="color:#bbb;font-weight:400">— one per line, append only</span></label>
+      <textarea id="facts" rows="6">John has a rich uncle in Houston who takes an interest in him at age 7
+John shows exceptional talent in golf from age 9
+John's uncle sponsors his education at a boarding school in the UK
+John studies medicine at University College London
+John befriends an Indian diplomat named Rajan Mehta during his residency</textarea>
+    </div>
+  </div>
+
+  <!-- Settings -->
+  <div class="card">
+    <div class="section-label">Settings</div>
+    <div class="controls-row">
+
+      <div class="control-group">
+        <label for="model">Model</label>
+        <select id="model">
+          <option value="claude-opus-4-6">claude-opus-4-6</option>
+          <option value="claude-sonnet-4-6" selected>claude-sonnet-4-6</option>
+          <option value="claude-haiku-4-5-20251001">claude-haiku-4-5-20251001</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>Temperature &mdash; <span id="tempLabel">0.8</span></label>
+        <div class="slider-wrap">
+          <span style="font-size:11px;color:#aaa">precise</span>
+          <input type="range" id="temperature" min="0" max="10" value="8" step="1">
+          <span style="font-size:11px;color:#aaa">creative</span>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label>Story length</label>
+        <div class="radio-group" id="lengthGroup">
+          <div class="pill" data-value="short">Short</div>
+          <div class="pill active" data-value="medium">Medium</div>
+          <div class="pill" data-value="long">Long</div>
+        </div>
+      </div>
+
+      <button class="generate-btn" id="generateBtn" onclick="generate()">
+        Generate
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Output -->
+  <div class="card" id="outputCard">
+    <div class="story-header">
+      <div class="section-label" style="margin-bottom:0">Generated story</div>
+      <span class="badge" id="storyBadge" style="display:none"></span>
+    </div>
+    <div class="divider"></div>
+    <div id="storyOutput" class="placeholder">
+      Your story will appear here after you click Generate.
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // -- Temperature slider --
+  const tempSlider = document.getElementById('temperature');
+  const tempLabel  = document.getElementById('tempLabel');
+  tempSlider.addEventListener('input', () => {
+    tempLabel.textContent = (tempSlider.value / 10).toFixed(1);
+  });
+
+  // -- Story length pills --
+  let selectedLength = 'medium';
+  document.getElementById('lengthGroup').querySelectorAll('.pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('#lengthGroup .pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      selectedLength = pill.dataset.value;
+    });
+  });
+
+  // -- Generate --
+  async function generate() {
+    const startState = document.getElementById('startState').value.trim();
+    const endState   = document.getElementById('endState').value.trim();
+    const facts      = document.getElementById('facts').value.trim();
+    const model      = document.getElementById('model').value;
+    const temperature = parseFloat((tempSlider.value / 10).toFixed(1));
+
+    if (!startState || !endState || !facts) {
+      setOutput('<span class="error-text">Please fill in start state, end state, and at least one fact.</span>');
+      return;
+    }
+
+    const btn = document.getElementById('generateBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Generating...';
+    document.getElementById('storyBadge').style.display = 'none';
+    setOutput('<span class="placeholder">Generating your story — this may take 20–30 seconds...</span>');
+
+    try {
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ startState, endState, facts, model, temperature, storyLength: selectedLength })
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        setOutput('<span class="error-text">Error: ' + escapeHtml(data.error) + '</span>');
+      } else {
+        renderStory(data);
+      }
+    } catch (e) {
+      setOutput('<span class="error-text">Network error: ' + escapeHtml(e.message) + '</span>');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Generate';
+    }
+  }
+
+  function renderStory(data) {
+    const paragraphs = data.story
+      .split(/\n\n+/)
+      .map(p => p.trim())
+      .filter(p => p.length > 0)
+      .map(p => '<p>' + escapeHtml(p) + '</p>')
+      .join('');
+
+    setOutput('<div class="story-text">' + paragraphs + '</div>');
+
+    const badge = document.getElementById('storyBadge');
+    badge.textContent = data.factCount + ' facts \u00b7 ' + selectedLength + ' \u00b7 ' + data.model;
+    badge.style.display = 'inline-block';
+  }
+
+  function setOutput(html) {
+    document.getElementById('storyOutput').innerHTML = html;
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+</script>
+</body>
+</html>

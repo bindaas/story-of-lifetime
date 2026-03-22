@@ -13,8 +13,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * WriterAgent takes the WorldModel and generates full prose.
- * Reads its prompt template and config from files — no hardcoded values.
+ * WriterAgent generates full prose from the WorldModel.
+ * Reads its prompt template from the classpath.
+ * All config (model, temperature, length) comes from AppConfig.
  */
 public class WriterAgent {
 
@@ -77,10 +78,10 @@ public class WriterAgent {
         ObjectNode body = mapper.createObjectNode();
         body.put("model",       config.getModel());
         body.put("max_tokens",  config.getMaxTokens());
-        body.put("temperature", config.getWriterTemperature());
+        body.put("temperature", config.getTemperature());
 
         ArrayNode messages = mapper.createArrayNode();
-        ObjectNode message = mapper.createObjectNode();
+        ObjectNode message  = mapper.createObjectNode();
         message.put("role",    "user");
         message.put("content", userMessage);
         messages.add(message);
@@ -98,13 +99,11 @@ public class WriterAgent {
 
         try (Response response = httpClient.newCall(request).execute()) {
             String responseBody = response.body().string();
-
             if (!response.isSuccessful()) {
                 throw new RuntimeException(
                     "API call failed [HTTP " + response.code() + "]: " + responseBody
                 );
             }
-
             JsonNode root = mapper.readTree(responseBody);
             return root.path("content").get(0).path("text").asText();
         }
