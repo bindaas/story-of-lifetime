@@ -373,8 +373,19 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
 
     setOutput('<div class="story-text">' + paragraphs + '</div>');
 
+    const secs    = (data.elapsedMs / 1000).toFixed(1);
+    const cost    = data.costUsd < 0.001
+                    ? '< $0.001'
+                    : '$' + data.costUsd.toFixed(4);
+    const tokens  = (data.inputTokens + data.outputTokens).toLocaleString();
+
     const badge = document.getElementById('storyBadge');
-    badge.textContent = data.factCount + ' facts \u00b7 ' + selectedLength + ' \u00b7 ' + data.model;
+    badge.textContent = data.factCount + ' facts · '
+        + data.storyLength + ' · '
+        + data.model + ' · '
+        + tokens + ' tokens · '
+        + cost + ' · '
+        + secs + 's';
     badge.style.display = 'inline-block';
   }
 

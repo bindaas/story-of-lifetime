@@ -26,7 +26,7 @@ gcloud run deploy $SERVICE \
     --platform managed \
     --region $REGION \
     --allow-unauthenticated \
-    --set-secrets="ANTHROPIC_API_KEY=ANTHROPIC_API_KEY:latest" \
+    --set-secrets="STORY_OF_LIFETIME_ANTHROPIC_API_KEY=ANTHROPIC_API_KEY:latest" \
     --memory 512Mi \
     --timeout 120
 

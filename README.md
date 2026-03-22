@@ -81,15 +81,22 @@ cd story-of-lifetime
 ```
 
 **2. Set your API key**
+
+This project uses a dedicated API key separate from other projects — so usage and costs can be tracked independently.
+
+Create a project-specific key at [console.anthropic.com/settings/keys](https://console.anthropic.com/settings/keys) and name it `story-of-lifetime`. Then add it to your shell:
+
 ```bash
-export ANTHROPIC_API_KEY=your_key_here
+export STORY_OF_LIFETIME_ANTHROPIC_API_KEY=your_key_here
 ```
 
 Add to `~/.zshrc` to make it permanent:
 ```bash
-echo 'export ANTHROPIC_API_KEY=your_key_here' >> ~/.zshrc
+echo 'export STORY_OF_LIFETIME_ANTHROPIC_API_KEY=your_key_here' >> ~/.zshrc
 source ~/.zshrc
 ```
+
+The app checks for `STORY_OF_LIFETIME_ANTHROPIC_API_KEY` first, then falls back to `ANTHROPIC_API_KEY` — so existing local setups continue to work.
 
 **3. Build and run**
 ```bash
@@ -203,7 +210,7 @@ gcloud services enable cloudbuild.googleapis.com
 
 **Store your Anthropic API key as a secret:**
 ```bash
-echo -n "$ANTHROPIC_API_KEY" | gcloud secrets create ANTHROPIC_API_KEY \
+echo -n "$STORY_OF_LIFETIME_ANTHROPIC_API_KEY" | gcloud secrets create ANTHROPIC_API_KEY \
     --data-file=- \
     --replication-policy="automatic"
 ```
