@@ -175,3 +175,92 @@ All settings can also be overridden per-request from the browser UI.
 ## Author
 
 Rajiv Narula — [@bindaas](https://github.com/bindaas)
+
+---
+
+## Deploying to Google Cloud Run
+
+### Prerequisites
+- Docker installed on your machine
+- Google Cloud CLI installed (`brew install --cask google-cloud-sdk`)
+- Google Cloud project set up with billing enabled
+
+### One-time setup
+
+**Enable required APIs:**
+```bash
+gcloud services enable run.googleapis.com
+gcloud services enable secretmanager.googleapis.com
+gcloud services enable containerregistry.googleapis.com
+gcloud services enable cloudbuild.googleapis.com
+```
+
+**Store your Anthropic API key as a secret:**
+```bash
+echo -n "$ANTHROPIC_API_KEY" | gcloud secrets create ANTHROPIC_API_KEY \
+    --data-file=- \
+    --replication-policy="automatic"
+```
+
+**Grant Cloud Run access to the secret:**
+```bash
+# Get your project number first
+gcloud projects describe $(gcloud config get-value project) --format="value(projectNumber)"
+
+# Then grant access (replace YOUR_PROJECT_NUMBER)
+gcloud secrets add-iam-policy-binding ANTHROPIC_API_KEY \
+    --member="serviceAccount:YOUR_PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
+    --role="roles/secretmanager.secretAccessor"
+```
+
+### Deploy
+
+**Step 1 — Build and push the Docker image:**
+```bash
+PROJECT_ID=$(gcloud config get-value project)
+docker build -t gcr.io/$PROJECT_ID/story-of-lifetime .
+docker push gcr.io/$PROJECT_ID/story-of-lifetime
+```
+
+**Step 2 — Deploy to Cloud Run:**
+```bash
+gcloud run deploy story-of-lifetime \
+    --image gcr.io/$PROJECT_ID/story-of-lifetime \
+    --platform managed \
+    --region us-central1 \
+    --allow-unauthenticated \
+    --set-secrets="ANTHROPIC_API_KEY=ANTHROPIC_API_KEY:latest" \
+    --memory 512Mi \
+    --timeout 120
+```
+
+**Step 3 — Get your public URL:**
+```bash
+gcloud run services describe story-of-lifetime \
+    --platform managed \
+    --region us-central1 \
+    --format="value(status.url)"
+```
+
+Open that URL in your browser — your app is live.
+
+### Redeploying after code changes
+
+Every time you make changes, repeat Steps 1 and 2:
+```bash
+PROJECT_ID=$(gcloud config get-value project)
+docker build -t gcr.io/$PROJECT_ID/story-of-lifetime .
+docker push gcr.io/$PROJECT_ID/story-of-lifetime
+gcloud run deploy story-of-lifetime \
+    --image gcr.io/$PROJECT_ID/story-of-lifetime \
+    --platform managed \
+    --region us-central1 \
+    --allow-unauthenticated \
+    --set-secrets="ANTHROPIC_API_KEY=ANTHROPIC_API_KEY:latest" \
+    --memory 512Mi \
+    --timeout 120
+```
+
+### Cost
+
+Cloud Run charges per request — the first 2 million requests/month are free. At demo/learning usage you will pay nothing for the infrastructure. You only pay for Anthropic API calls.
