@@ -4,6 +4,12 @@ An AI Agent web application that generates a coherent life story from a fixed st
 
 ---
 
+## Live Demo
+
+[https://story-of-lifetime-ii73f77uuq-uc.a.run.app](https://story-of-lifetime-ii73f77uuq-uc.a.run.app)
+
+---
+
 ## What This Project Demonstrates
 
 - **Goal-directed planning** — the agent always knows where it needs to end up
