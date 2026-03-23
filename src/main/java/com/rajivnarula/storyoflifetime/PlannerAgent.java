@@ -13,17 +13,19 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * WriterAgent generates full prose from the WorldModel and Planner outline.
- * Returns token usage and cost for independent tracking.
+ * PlannerAgent reads the WorldModel and produces a structured story outline.
+ * Runs before the WriterAgent — its outline is passed into the Writer as context.
+ *
+ * Uses a lower temperature than the Writer — we want logical plans, not creative ones.
  */
-public class WriterAgent {
+public class PlannerAgent {
 
     private static final String API_URL     = "https://api.anthropic.com/v1/messages";
     private static final String API_KEY     =
             System.getenv("STORY_OF_LIFETIME_ANTHROPIC_API_KEY") != null
             ? System.getenv("STORY_OF_LIFETIME_ANTHROPIC_API_KEY")
             : System.getenv("ANTHROPIC_API_KEY");
-    private static final String PROMPT_FILE = "prompts/writer_prompt.txt";
+    private static final String PROMPT_FILE = "prompts/planner_prompt.txt";
 
     private final AppConfig config;
 
@@ -35,25 +37,25 @@ public class WriterAgent {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public WriterAgent(AppConfig config) {
+    public PlannerAgent(AppConfig config) {
         this.config = config;
     }
 
-    public WriterResult write(WorldModel worldModel, String outline) throws Exception {
-        String   prompt    = buildPrompt(worldModel, outline);
+    public PlannerResult plan(WorldModel worldModel) throws Exception {
+        String   prompt    = buildPrompt(worldModel);
         long     startTime = System.currentTimeMillis();
         JsonNode root      = callClaude(prompt);
         long     elapsedMs = System.currentTimeMillis() - startTime;
 
-        String story        = root.path("content").get(0).path("text").asText();
+        String outline      = root.path("content").get(0).path("text").asText();
         int    inputTokens  = root.path("usage").path("input_tokens").asInt(0);
         int    outputTokens = root.path("usage").path("output_tokens").asInt(0);
-        double costUsd      = calculateCost(config.getWriterModel(), inputTokens, outputTokens);
+        double costUsd      = calculateCost(config.getPlannerModel(), inputTokens, outputTokens);
 
-        System.out.printf("[WriterAgent] model=%s input=%d output=%d cost=$%.5f elapsed=%dms%n",
-                config.getWriterModel(), inputTokens, outputTokens, costUsd, elapsedMs);
+        System.out.printf("[PlannerAgent] model=%s input=%d output=%d cost=$%.5f elapsed=%dms%n",
+                config.getPlannerModel(), inputTokens, outputTokens, costUsd, elapsedMs);
 
-        return new WriterResult(story, inputTokens, outputTokens, costUsd, elapsedMs);
+        return new PlannerResult(outline, inputTokens, outputTokens, costUsd, elapsedMs);
     }
 
     private double calculateCost(String model, int inputTokens, int outputTokens) {
@@ -75,7 +77,7 @@ public class WriterAgent {
              + (outputTokens / 1_000_000.0 * outputPricePerM);
     }
 
-    private String buildPrompt(WorldModel worldModel, String outline) throws IOException {
+    private String buildPrompt(WorldModel worldModel) throws IOException {
         String template = loadPromptTemplate();
 
         List<String> facts = worldModel.getFacts();
@@ -85,11 +87,9 @@ public class WriterAgent {
         }
 
         return template
-                .replace("{{START_STATE}}",  worldModel.getStartState())
-                .replace("{{END_STATE}}",    worldModel.getEndState())
-                .replace("{{FACTS}}",        factList.toString().trim())
-                .replace("{{OUTLINE}}",      outline)
-                .replace("{{STORY_LENGTH}}", config.getStoryLength());
+                .replace("{{START_STATE}}", worldModel.getStartState())
+                .replace("{{END_STATE}}",   worldModel.getEndState())
+                .replace("{{FACTS}}",       factList.toString().trim());
     }
 
     private String loadPromptTemplate() throws IOException {
@@ -110,9 +110,9 @@ public class WriterAgent {
         }
 
         ObjectNode body = mapper.createObjectNode();
-        body.put("model",       config.getWriterModel());
+        body.put("model",       config.getPlannerModel());
         body.put("max_tokens",  config.getMaxTokens());
-        body.put("temperature", config.getWriterTemperature());
+        body.put("temperature", config.getPlannerTemperature());
 
         ArrayNode messages = mapper.createArrayNode();
         ObjectNode message  = mapper.createObjectNode();

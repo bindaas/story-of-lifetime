@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * REST controller — receives story generation requests from the browser
- * and returns a StoryResponse as JSON.
+ * Orchestrates the agent pipeline: Planner → Writer.
+ * Returns a StoryResponse with separate cost breakdown per agent.
  */
 @RestController
 @RequestMapping("/api")
@@ -19,6 +19,7 @@ public class StoryController {
     @PostMapping("/generate")
     public ResponseEntity<?> generate(@RequestBody StoryRequest request) {
         try {
+            // Parse facts
             List<String> facts = Arrays.stream(request.getFacts().split("\n"))
                     .map(String::trim)
                     .filter(line -> !line.isBlank())
@@ -31,15 +32,39 @@ public class StoryController {
             );
 
             AppConfig config = new AppConfig(
-                    request.getModel(),
-                    request.getTemperature(),
+                    request.getPlannerModel(),
+                    request.getPlannerTemperature(),
+                    request.getWriterModel(),
+                    request.getWriterTemperature(),
                     request.getStoryLength()
             );
 
-            WriterAgent writer   = new WriterAgent(config);
-            StoryResponse result = writer.write(worldModel, config.getStoryLength(), facts.size());
+            // Step 1 — Planner
+            PlannerAgent  planner      = new PlannerAgent(config);
+            PlannerResult plannerResult = planner.plan(worldModel);
 
-            return ResponseEntity.ok(result);
+            // Step 2 — Writer (receives Planner outline)
+            WriterAgent  writer      = new WriterAgent(config);
+            WriterResult writerResult = writer.write(worldModel, plannerResult.getOutline());
+
+            StoryResponse response = new StoryResponse(
+                    plannerResult.getOutline(),
+                    writerResult.getStory(),
+                    facts.size(),
+                    config.getStoryLengthRaw(),
+                    config.getPlannerModel(),
+                    plannerResult.getInputTokens(),
+                    plannerResult.getOutputTokens(),
+                    plannerResult.getCostUsd(),
+                    plannerResult.getElapsedMs(),
+                    config.getWriterModel(),
+                    writerResult.getInputTokens(),
+                    writerResult.getOutputTokens(),
+                    writerResult.getCostUsd(),
+                    writerResult.getElapsedMs()
+            );
+
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             return ResponseEntity

@@ -1,4 +1,4 @@
-You are a skilled storyteller. Your job is to write a compelling, plausible life story that connects a start state to an end state, honouring every fact provided.
+You are a skilled storyteller. Your job is to write a compelling, plausible life story that follows a provided outline, connecting a start state to an end state, honouring every fact provided.
 
 START STATE:
 {{START_STATE}}
@@ -9,9 +9,13 @@ END STATE:
 FACTS (in chronological order, all must be honoured):
 {{FACTS}}
 
+OUTLINE TO FOLLOW:
+{{OUTLINE}}
+
 INSTRUCTIONS:
 - Write the story in prose, in third person
 - The story must begin with the start state and end with the end state
+- Follow the outline milestones in order
 - Every fact must appear naturally woven into the narrative
 - The story should feel plausible and human
 - Length: {{STORY_LENGTH}}

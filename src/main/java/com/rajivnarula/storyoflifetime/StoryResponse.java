@@ -1,39 +1,68 @@
 package com.rajivnarula.storyoflifetime;
 
 /**
- * Represents the full response sent back to the browser.
- * Includes the story plus token usage and cost metadata.
+ * Full response sent back to the browser.
+ * Includes outline, story, and separate cost breakdown for Planner and Writer.
  */
 public class StoryResponse {
 
-    private String story;
-    private String model;
-    private String storyLength;
-    private int    factCount;
-    private int    inputTokens;
-    private int    outputTokens;
-    private double costUsd;
-    private long   elapsedMs;
+    private final String outline;
+    private final String story;
+    private final int    factCount;
+    private final String storyLength;
 
-    public StoryResponse(String story, String model, String storyLength,
-                         int factCount, int inputTokens, int outputTokens,
-                         double costUsd, long elapsedMs) {
-        this.story        = story;
-        this.model        = model;
-        this.storyLength  = storyLength;
-        this.factCount    = factCount;
-        this.inputTokens  = inputTokens;
-        this.outputTokens = outputTokens;
-        this.costUsd      = costUsd;
-        this.elapsedMs    = elapsedMs;
+    // Planner metrics
+    private final String plannerModel;
+    private final int    plannerInputTokens;
+    private final int    plannerOutputTokens;
+    private final double plannerCostUsd;
+    private final long   plannerElapsedMs;
+
+    // Writer metrics
+    private final String writerModel;
+    private final int    writerInputTokens;
+    private final int    writerOutputTokens;
+    private final double writerCostUsd;
+    private final long   writerElapsedMs;
+
+    public StoryResponse(String outline, String story, int factCount, String storyLength,
+                         String plannerModel, int plannerInputTokens, int plannerOutputTokens,
+                         double plannerCostUsd, long plannerElapsedMs,
+                         String writerModel, int writerInputTokens, int writerOutputTokens,
+                         double writerCostUsd, long writerElapsedMs) {
+        this.outline             = outline;
+        this.story               = story;
+        this.factCount           = factCount;
+        this.storyLength         = storyLength;
+        this.plannerModel        = plannerModel;
+        this.plannerInputTokens  = plannerInputTokens;
+        this.plannerOutputTokens = plannerOutputTokens;
+        this.plannerCostUsd      = plannerCostUsd;
+        this.plannerElapsedMs    = plannerElapsedMs;
+        this.writerModel         = writerModel;
+        this.writerInputTokens   = writerInputTokens;
+        this.writerOutputTokens  = writerOutputTokens;
+        this.writerCostUsd       = writerCostUsd;
+        this.writerElapsedMs     = writerElapsedMs;
     }
 
-    public String getStory()        { return story; }
-    public String getModel()        { return model; }
-    public String getStoryLength()  { return storyLength; }
-    public int    getFactCount()    { return factCount; }
-    public int    getInputTokens()  { return inputTokens; }
-    public int    getOutputTokens() { return outputTokens; }
-    public double getCostUsd()      { return costUsd; }
-    public long   getElapsedMs()    { return elapsedMs; }
+    public String getOutline()              { return outline; }
+    public String getStory()                { return story; }
+    public int    getFactCount()            { return factCount; }
+    public String getStoryLength()          { return storyLength; }
+
+    public String getPlannerModel()         { return plannerModel; }
+    public int    getPlannerInputTokens()   { return plannerInputTokens; }
+    public int    getPlannerOutputTokens()  { return plannerOutputTokens; }
+    public double getPlannerCostUsd()       { return plannerCostUsd; }
+    public long   getPlannerElapsedMs()     { return plannerElapsedMs; }
+
+    public String getWriterModel()          { return writerModel; }
+    public int    getWriterInputTokens()    { return writerInputTokens; }
+    public int    getWriterOutputTokens()   { return writerOutputTokens; }
+    public double getWriterCostUsd()        { return writerCostUsd; }
+    public long   getWriterElapsedMs()      { return writerElapsedMs; }
+
+    public double getTotalCostUsd()         { return plannerCostUsd + writerCostUsd; }
+    public long   getTotalElapsedMs()       { return plannerElapsedMs + writerElapsedMs; }
 }
