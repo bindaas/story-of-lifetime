@@ -15,8 +15,10 @@ An AI Agent web application that generates a coherent life story from a fixed st
 - **Goal-directed planning** — the agent always knows where it needs to end up
 - **World model** — shared memory of story state, accepted facts, and outline
 - **Multi-agent pipeline** — Planner, Critic, and Writer each with a single responsibility
+- **Agent loop** — the Critic can reject the Planner's outline and force a replan, up to 3 times
 - **Replanning** — when new facts arrive the agent reconciles and revises its plan
 - **Append-only environment** — facts are immutable; new facts are reconciled, never override old ones
+- **Cost tracking** — token usage and cost tracked separately per agent per request
 
 ---
 
@@ -24,42 +26,51 @@ An AI Agent web application that generates a coherent life story from a fixed st
 
 Given a **start state**, an **end state**, and a **fact file**, the agent generates a plausible life story connecting them. When new facts are added, the agent replans and produces a revised story — making visible exactly where and why the narrative diverged.
 
+**Triggering a Critic rejection:**
+Add a contradictory fact to the facts box — e.g. *"John's uncle goes bankrupt when John is 8 and can no longer support him."* This forces the Planner to find a new path (golf scholarship, bursary, etc.) and makes the agent loop visible.
+
 ---
 
 ## Agent Architecture
 
 ```
-Browser form (start + end + facts + settings)
+Browser form (start + end + facts + per-agent settings)
          │
          ▼
-  StoryController  (HTTP POST /api/generate)
+  StoryController  (POST /api/generate)
          │
          ▼
-    [ Planner ]  ──── builds story outline         (Phase 4)
+    [ Planner ]  ── builds story outline (5-7 milestones)
          │
          ▼
-    [ Critic  ]  ──── checks feasibility            (Phase 5)
+    [ Critic  ]  ── checks feasibility and fact consistency
+         │
+    ┌────┴─────────────────┐
+  approve                reject (with reason)
+    │                       │
+    ▼                       ▼
+[ Writer ]           Planner retries with
+generates prose      critic feedback attached
+                     (max 3 attempts)
          │
          ▼
-    [ Writer  ]  ──── generates full prose story
-         │
-         ▼
-  JSON response → browser renders story
+  JSON response → browser renders outline + critic log + story + cost breakdown
 ```
 
 ---
 
 ## Build Phases
 
-| Phase | What it does | Status |
-|-------|-------------|--------|
+| Phase | What was built | Status |
+|-------|---------------|--------|
 | 1 | Verify Claude API connection | Done |
 | 2 | Writer in isolation — hardcoded inputs | Done |
-| 3 | World Model — load inputs from config files | Done |
-| 3b | Web application — Spring Boot + single page UI | Done |
-| 4 | Planner added — outline before prose | Upcoming |
-| 5 | Critic added — feedback loop, reject and replan | Upcoming |
-| 6 | Replan trigger — detect new facts, regenerate | Upcoming |
+| 3 | World Model — config files, prompt templates | Done |
+| 3b | Spring Boot web app, single page UI | Done |
+| 3c | Cloud Run deployment, permanent public URL | Done |
+| 4 | Planner agent — separate model + cost per agent | Done |
+| 5 | Critic agent — full Planner→Critic→Writer loop | Done |
+| 6 | Replan trigger — add facts, v1 vs v2 side by side | Upcoming |
 | 7 | Diff and explainability — what changed and why | Upcoming |
 
 ---
@@ -82,21 +93,16 @@ cd story-of-lifetime
 
 **2. Set your API key**
 
-This project uses a dedicated API key separate from other projects — so usage and costs can be tracked independently.
+This project uses a dedicated API key separate from other projects — usage and costs are tracked independently.
 
-Create a project-specific key at [console.anthropic.com/settings/keys](https://console.anthropic.com/settings/keys) and name it `story-of-lifetime`. Then add it to your shell:
+Create a project-specific key at [console.anthropic.com/settings/keys](https://console.anthropic.com/settings/keys), name it `story-of-lifetime`, then add it to your shell:
 
-```bash
-export STORY_OF_LIFETIME_ANTHROPIC_API_KEY=your_key_here
-```
-
-Add to `~/.zshrc` to make it permanent:
 ```bash
 echo 'export STORY_OF_LIFETIME_ANTHROPIC_API_KEY=your_key_here' >> ~/.zshrc
 source ~/.zshrc
 ```
 
-The app checks for `STORY_OF_LIFETIME_ANTHROPIC_API_KEY` first, then falls back to `ANTHROPIC_API_KEY` — so existing local setups continue to work.
+The app checks for `STORY_OF_LIFETIME_ANTHROPIC_API_KEY` first, then falls back to `ANTHROPIC_API_KEY`.
 
 **3. Build and run**
 ```bash
@@ -117,6 +123,8 @@ http://localhost:8080
 story-of-lifetime/
 ├── pom.xml
 ├── README.md
+├── Dockerfile
+├── deploy.sh                          ← one command Cloud Run deploy
 ├── facts/
 │   ├── start.txt                      ← start state (CLI mode)
 │   ├── end.txt                        ← end state (CLI mode)
@@ -124,40 +132,64 @@ story-of-lifetime/
 └── src/
     └── main/
         ├── resources/
-        │   ├── system.properties      ← model, temperature, story length defaults
+        │   ├── system.properties      ← model, temperature, limits per agent
         │   ├── prompts/
-        │   │   └── writer_prompt.txt  ← prompt template with placeholders
+        │   │   ├── planner_prompt.txt
+        │   │   ├── critic_prompt.txt
+        │   │   └── writer_prompt.txt
         │   └── static/
         │       └── index.html         ← single page frontend
         └── java/com/rajivnarula/storyoflifetime/
             ├── Main.java              ← Spring Boot entry point
-            ├── StoryController.java   ← HTTP POST /api/generate
-            ├── StoryRequest.java      ← JSON request payload
+            ├── StoryController.java   ← orchestrates Planner→Critic→Writer loop
+            ├── StoryRequest.java      ← JSON request from browser
+            ├── StoryResponse.java     ← JSON response to browser
             ├── AppConfig.java         ← reads system.properties
-            ├── WorldModel.java        ← story state (file or form)
-            └── WriterAgent.java       ← generates prose via Claude API
+            ├── WorldModel.java        ← story state (file or form input)
+            ├── PlannerAgent.java      ← builds story outline
+            ├── PlannerResult.java     ← Planner output + token metrics
+            ├── CriticAgent.java       ← approves or rejects outline
+            ├── CriticResult.java      ← Critic decision + token metrics
+            ├── WriterAgent.java       ← generates prose from outline
+            └── WriterResult.java      ← Writer output + token metrics
 ```
 
 ---
 
 ## Configuration
 
-Edit `src/main/resources/system.properties` — no recompile needed for defaults:
+Edit `src/main/resources/system.properties` — no recompile needed:
 
 ```properties
-# Options: claude-opus-4-6, claude-sonnet-4-6, claude-haiku-4-5-20251001
-claude.model=claude-sonnet-4-6
+# Planner — logical, low temperature
+planner.model=claude-sonnet-4-6
+planner.temperature=0.3
 
-claude.max_tokens=2048
+# Critic — analytical, very low temperature
+critic.model=claude-sonnet-4-6
+critic.temperature=0.1
+critic.max_attempts=3
 
-# 0.0 (deterministic) → 1.0 (most creative)
+# Writer — creative, higher temperature
+writer.model=claude-opus-4-6
 writer.temperature=0.8
 
 # short (2-3 paragraphs) | medium (4-6) | long (8-10)
 writer.story_length=medium
+
+claude.max_tokens=2048
 ```
 
-All settings can also be overridden per-request from the browser UI.
+All agent settings can also be overridden per-request from the browser UI.
+
+---
+
+## What Appears in the UI After Generation
+
+1. **Cost table** — tokens and cost broken down by Planner, Critic, and Writer
+2. **Critic decision log** — each attempt shown as approved (green) or rejected (red) with the specific reason
+3. **Approved outline** — the Planner's final accepted milestones in purple
+4. **Generated story** — the Writer's prose in full
 
 ---
 
@@ -165,11 +197,35 @@ All settings can also be overridden per-request from the browser UI.
 
 | What you want to try | Where to change it |
 |---|---|
-| Different Claude model | Model dropdown in UI |
-| More/less creative story | Temperature slider in UI |
+| Different model per agent | Model dropdowns in UI |
+| More/less creative output | Temperature sliders in UI |
 | Longer/shorter story | Length pills in UI |
-| Different prompt style | `src/main/resources/prompts/writer_prompt.txt` |
-| Change default settings | `src/main/resources/system.properties` |
+| Force a Critic rejection | Add a contradictory fact to the facts box |
+| Change prompt style | `src/main/resources/prompts/*.txt` |
+| Change defaults | `src/main/resources/system.properties` |
+
+---
+
+## Deploying to Google Cloud Run
+
+**One-time setup:**
+```bash
+gcloud services enable run.googleapis.com secretmanager.googleapis.com \
+    containerregistry.googleapis.com cloudbuild.googleapis.com
+
+echo -n "$STORY_OF_LIFETIME_ANTHROPIC_API_KEY" | gcloud secrets create ANTHROPIC_API_KEY \
+    --data-file=- --replication-policy="automatic"
+
+gcloud secrets add-iam-policy-binding ANTHROPIC_API_KEY \
+    --member="serviceAccount:$(gcloud projects describe $(gcloud config get-value project) \
+    --format='value(projectNumber)')-compute@developer.gserviceaccount.com" \
+    --role="roles/secretmanager.secretAccessor"
+```
+
+**Every deployment:**
+```bash
+./deploy.sh
+```
 
 ---
 
@@ -179,7 +235,9 @@ All settings can also be overridden per-request from the browser UI.
 
 **Agents have single responsibilities.** Planner never writes prose. Writer never judges feasibility. Critic never generates content. Clean separation makes each agent inspectable and testable in isolation.
 
-**The World Model is the connective tissue.** Passed into every agent on every run — it is what makes story v2 a coherent revision of v1, not a fresh start.
+**The Critic loop is the heart of the agent.** A pipeline executes in sequence. An agent evaluates and decides its next step. The Critic's reject-and-replan cycle is what crosses that line.
+
+**Cost is tracked per agent.** Every API call returns token usage. Each agent accumulates its own cost independently — making the tradeoffs between model choices visible and measurable.
 
 **Config and prompts live outside code.** Model, temperature, story length, and prompt wording are all in files — experiment freely without recompiling.
 
@@ -188,92 +246,3 @@ All settings can also be overridden per-request from the browser UI.
 ## Author
 
 Rajiv Narula — [@bindaas](https://github.com/bindaas)
-
----
-
-## Deploying to Google Cloud Run
-
-### Prerequisites
-- Docker installed on your machine
-- Google Cloud CLI installed (`brew install --cask google-cloud-sdk`)
-- Google Cloud project set up with billing enabled
-
-### One-time setup
-
-**Enable required APIs:**
-```bash
-gcloud services enable run.googleapis.com
-gcloud services enable secretmanager.googleapis.com
-gcloud services enable containerregistry.googleapis.com
-gcloud services enable cloudbuild.googleapis.com
-```
-
-**Store your Anthropic API key as a secret:**
-```bash
-echo -n "$STORY_OF_LIFETIME_ANTHROPIC_API_KEY" | gcloud secrets create ANTHROPIC_API_KEY \
-    --data-file=- \
-    --replication-policy="automatic"
-```
-
-**Grant Cloud Run access to the secret:**
-```bash
-# Get your project number first
-gcloud projects describe $(gcloud config get-value project) --format="value(projectNumber)"
-
-# Then grant access (replace YOUR_PROJECT_NUMBER)
-gcloud secrets add-iam-policy-binding ANTHROPIC_API_KEY \
-    --member="serviceAccount:YOUR_PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
-    --role="roles/secretmanager.secretAccessor"
-```
-
-### Deploy
-
-**Step 1 — Build and push the Docker image:**
-```bash
-PROJECT_ID=$(gcloud config get-value project)
-docker build -t gcr.io/$PROJECT_ID/story-of-lifetime .
-docker push gcr.io/$PROJECT_ID/story-of-lifetime
-```
-
-**Step 2 — Deploy to Cloud Run:**
-```bash
-gcloud run deploy story-of-lifetime \
-    --image gcr.io/$PROJECT_ID/story-of-lifetime \
-    --platform managed \
-    --region us-central1 \
-    --allow-unauthenticated \
-    --set-secrets="ANTHROPIC_API_KEY=ANTHROPIC_API_KEY:latest" \
-    --memory 512Mi \
-    --timeout 120
-```
-
-**Step 3 — Get your public URL:**
-```bash
-gcloud run services describe story-of-lifetime \
-    --platform managed \
-    --region us-central1 \
-    --format="value(status.url)"
-```
-
-Open that URL in your browser — your app is live.
-
-### Redeploying after code changes
-
-Every time you make changes, repeat Steps 1 and 2:
-```bash
-PROJECT_ID=$(gcloud config get-value project)
-docker build -t gcr.io/$PROJECT_ID/story-of-lifetime .
-docker push gcr.io/$PROJECT_ID/story-of-lifetime
-gcloud run deploy story-of-lifetime \
-    --image gcr.io/$PROJECT_ID/story-of-lifetime \
-    --platform managed \
-    --region us-central1 \
-    --allow-unauthenticated \
-    --set-secrets="ANTHROPIC_API_KEY=ANTHROPIC_API_KEY:latest" \
-    --memory 512Mi \
-    --timeout 120
-```
-
-### Cost
-
-Cloud Run charges per request — the first 2 million requests/month are free. At demo/learning usage you will pay nothing for the infrastructure. You only pay for Anthropic API calls.
