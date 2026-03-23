@@ -13,18 +13,18 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * PlannerAgent produces a structured story outline.
- * On retry attempts, critic feedback is injected into the prompt
- * so the Planner knows exactly what to fix.
+ * CriticAgent evaluates a Planner outline and either approves or rejects it.
+ * If rejected, the reason is fed back into the Planner for a revised attempt.
+ * Uses a low temperature — we want analytical, deterministic judgements.
  */
-public class PlannerAgent {
+public class CriticAgent {
 
     private static final String API_URL     = "https://api.anthropic.com/v1/messages";
     private static final String API_KEY     =
             System.getenv("STORY_OF_LIFETIME_ANTHROPIC_API_KEY") != null
             ? System.getenv("STORY_OF_LIFETIME_ANTHROPIC_API_KEY")
             : System.getenv("ANTHROPIC_API_KEY");
-    private static final String PROMPT_FILE = "prompts/planner_prompt.txt";
+    private static final String PROMPT_FILE = "prompts/critic_prompt.txt";
 
     private final AppConfig config;
 
@@ -36,29 +36,56 @@ public class PlannerAgent {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public PlannerAgent(AppConfig config) {
+    public CriticAgent(AppConfig config) {
         this.config = config;
     }
 
     /**
-     * criticFeedback is empty on the first attempt.
-     * On retries it contains the Critic's rejection reason.
+     * Evaluates the outline. previousFeedback is empty on the first attempt,
+     * and contains the prior rejection reason on subsequent attempts.
      */
-    public PlannerResult plan(WorldModel worldModel, String criticFeedback) throws Exception {
-        String   prompt    = buildPrompt(worldModel, criticFeedback);
+    public CriticResult evaluate(WorldModel worldModel, String outline,
+                                 String previousFeedback) throws Exception {
+
+        String   prompt    = buildPrompt(worldModel, outline, previousFeedback);
         long     startTime = System.currentTimeMillis();
         JsonNode root      = callClaude(prompt);
         long     elapsedMs = System.currentTimeMillis() - startTime;
 
-        String outline      = root.path("content").get(0).path("text").asText();
+        String rawResponse  = root.path("content").get(0).path("text").asText().trim();
         int    inputTokens  = root.path("usage").path("input_tokens").asInt(0);
         int    outputTokens = root.path("usage").path("output_tokens").asInt(0);
-        double costUsd      = calculateCost(config.getPlannerModel(), inputTokens, outputTokens);
+        double costUsd      = calculateCost(config.getCriticModel(), inputTokens, outputTokens);
 
-        System.out.printf("[PlannerAgent] model=%s input=%d output=%d cost=$%.5f elapsed=%dms%n",
-                config.getPlannerModel(), inputTokens, outputTokens, costUsd, elapsedMs);
+        CriticResult.Decision decision = parseDecision(rawResponse);
+        String                reason   = parseReason(rawResponse);
 
-        return new PlannerResult(outline, inputTokens, outputTokens, costUsd, elapsedMs);
+        System.out.printf("[CriticAgent] decision=%s model=%s input=%d output=%d cost=$%.5f elapsed=%dms%n",
+                decision, config.getCriticModel(), inputTokens, outputTokens, costUsd, elapsedMs);
+        System.out.printf("[CriticAgent] reason=%s%n", reason);
+
+        return new CriticResult(decision, reason, inputTokens, outputTokens, costUsd, elapsedMs);
+    }
+
+    private CriticResult.Decision parseDecision(String response) {
+        for (String line : response.split("\n")) {
+            if (line.startsWith("DECISION:")) {
+                return line.contains("APPROVED")
+                        ? CriticResult.Decision.APPROVED
+                        : CriticResult.Decision.REJECTED;
+            }
+        }
+        // Default to approved if we can't parse — don't block indefinitely
+        return CriticResult.Decision.APPROVED;
+    }
+
+    private String parseReason(String response) {
+        for (String line : response.split("\n")) {
+            if (line.startsWith("REASON:")) {
+                return line.substring("REASON:".length()).trim();
+            }
+        }
+        return response;
     }
 
     private double calculateCost(String model, int inputTokens, int outputTokens) {
@@ -75,7 +102,8 @@ public class PlannerAgent {
              + (outputTokens / 1_000_000.0 * outputPricePerM);
     }
 
-    private String buildPrompt(WorldModel worldModel, String criticFeedback) throws IOException {
+    private String buildPrompt(WorldModel worldModel, String outline,
+                                String previousFeedback) throws IOException {
         String template = loadPromptTemplate();
 
         List<String> facts = worldModel.getFacts();
@@ -84,15 +112,15 @@ public class PlannerAgent {
             factList.append((i + 1)).append(". ").append(facts.get(i)).append("\n");
         }
 
-        String feedbackSection = (criticFeedback == null || criticFeedback.isBlank())
+        String feedbackSection = previousFeedback == null || previousFeedback.isBlank()
                 ? ""
-                : "CRITIC FEEDBACK FROM PREVIOUS ATTEMPT:\n" + criticFeedback
-                  + "\n\nYour revised outline must specifically address this feedback.";
+                : "PREVIOUS REJECTION REASON:\n" + previousFeedback + "\n\nNote: the outline has been revised in response to this feedback. Evaluate the revised version.";
 
         return template
                 .replace("{{START_STATE}}",      worldModel.getStartState())
                 .replace("{{END_STATE}}",        worldModel.getEndState())
                 .replace("{{FACTS}}",            factList.toString().trim())
+                .replace("{{OUTLINE}}",          outline)
                 .replace("{{FEEDBACK_SECTION}}", feedbackSection);
     }
 
@@ -114,9 +142,9 @@ public class PlannerAgent {
         }
 
         ObjectNode body = mapper.createObjectNode();
-        body.put("model",       config.getPlannerModel());
-        body.put("max_tokens",  config.getMaxTokens());
-        body.put("temperature", config.getPlannerTemperature());
+        body.put("model",       config.getCriticModel());
+        body.put("max_tokens",  512);
+        body.put("temperature", config.getCriticTemperature());
 
         ArrayNode messages = mapper.createArrayNode();
         ObjectNode message  = mapper.createObjectNode();

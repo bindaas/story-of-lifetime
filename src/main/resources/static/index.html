@@ -6,88 +6,50 @@
   <title>Story of a Lifetime</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 14px;
-      background: #f5f4f0;
-      color: #1a1a1a;
-      min-height: 100vh;
-      padding: 32px 20px 60px;
+      font-size: 14px; background: #f5f4f0; color: #1a1a1a;
+      min-height: 100vh; padding: 32px 20px 60px;
     }
-
-    .app { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-
-    .app-header h1  { font-size: 20px; font-weight: 600; }
-    .app-header p   { font-size: 13px; color: #888; margin-top: 4px; }
+    .app { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+    .app-header h1 { font-size: 20px; font-weight: 600; }
+    .app-header p  { font-size: 13px; color: #888; margin-top: 4px; }
 
     .card {
-      background: #fff;
-      border: 0.5px solid #ddd;
-      border-radius: 12px;
-      padding: 20px 24px;
+      background: #fff; border: 0.5px solid #ddd;
+      border-radius: 12px; padding: 20px 24px;
     }
-
-    .agent-cards {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .agent-card {
-      background: #fff;
-      border: 0.5px solid #ddd;
-      border-radius: 12px;
-      padding: 20px 24px;
-    }
+    .agent-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .agent-card  { background: #fff; border: 0.5px solid #ddd; border-radius: 12px; padding: 20px 24px; }
 
     .section-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 14px;
+      font-size: 11px; font-weight: 600; color: #888;
+      text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px;
     }
-
     .agent-label {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 14px;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px;
     }
-
     .planner-label { color: #534AB7; }
+    .critic-label  { color: #993C1D; }
     .writer-label  { color: #0F6E56; }
 
-    .input-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 14px;
-    }
-
-    .input-group  { display: flex; flex-direction: column; gap: 6px; }
+    .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; }
+    .input-group { display: flex; flex-direction: column; gap: 6px; }
     .input-group label { font-size: 12px; color: #666; }
 
     textarea, select {
-      width: 100%;
-      border: 0.5px solid #ddd;
-      border-radius: 8px;
-      padding: 10px 12px;
-      font-size: 13px;
-      font-family: inherit;
-      color: #1a1a1a;
-      background: #fafafa;
+      width: 100%; border: 0.5px solid #ddd; border-radius: 8px;
+      padding: 10px 12px; font-size: 13px; font-family: inherit;
+      color: #1a1a1a; background: #fafafa;
       transition: border-color 0.15s, background 0.15s;
     }
-
     textarea { resize: vertical; }
     textarea:focus, select:focus { outline: none; border-color: #999; background: #fff; }
 
     .control-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
     .control-group label { font-size: 12px; color: #666; }
+    .control-group:last-child { margin-bottom: 0; }
 
     .slider-wrap { display: flex; align-items: center; gap: 8px; }
     .slider-wrap input[type=range] { flex: 1; accent-color: #1a1a1a; }
@@ -101,68 +63,63 @@
     .pill.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
 
     .bottom-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-top: 4px;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 16px; margin-top: 4px;
     }
-
     .length-group { display: flex; align-items: center; gap: 10px; }
     .length-group label { font-size: 12px; color: #666; white-space: nowrap; }
 
     .generate-btn {
-      padding: 10px 32px;
-      background: #1a1a1a; color: #fff;
-      border: none; border-radius: 8px;
-      font-size: 14px; font-weight: 500;
+      padding: 10px 32px; background: #1a1a1a; color: #fff;
+      border: none; border-radius: 8px; font-size: 14px; font-weight: 500;
       cursor: pointer; white-space: nowrap;
       transition: background 0.15s, opacity 0.15s;
     }
     .generate-btn:hover    { background: #333; }
     .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* Output */
-    .outline-box {
-      background: #f9f8ff;
-      border: 0.5px solid #c8c4f0;
-      border-radius: 8px;
-      padding: 14px 16px;
-      margin-bottom: 20px;
-      font-size: 13px;
-      line-height: 1.7;
-      color: #3C3489;
-      white-space: pre-line;
+    /* Cost table */
+    .cost-table { width: 100%; font-size: 12px; border-collapse: collapse; margin-bottom: 16px; }
+    .cost-table th {
+      text-align: left; color: #888; font-weight: 500;
+      padding: 4px 8px 4px 0; border-bottom: 0.5px solid #eee;
     }
+    .cost-table td { padding: 6px 8px 6px 0; border-bottom: 0.5px solid #f0f0f0; color: #333; }
+    .cost-table tr:last-child td { border-bottom: none; font-weight: 500; }
+    .cost-table .planner-row td:first-child { color: #534AB7; }
+    .cost-table .critic-row  td:first-child { color: #993C1D; }
+    .cost-table .writer-row  td:first-child { color: #0F6E56; }
 
+    /* Critic log */
+    .critic-log { margin-bottom: 16px; }
+    .critic-entry {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 8px 12px; border-radius: 8px; margin-bottom: 6px;
+      font-size: 13px;
+    }
+    .critic-entry.approved { background: #eaf3de; }
+    .critic-entry.rejected { background: #faece7; }
+    .critic-badge {
+      font-size: 10px; font-weight: 600; padding: 2px 8px;
+      border-radius: 20px; white-space: nowrap; margin-top: 1px;
+    }
+    .approved .critic-badge { background: #3b6d11; color: #fff; }
+    .rejected .critic-badge { background: #993C1D; color: #fff; }
+    .critic-reason { color: #444; line-height: 1.5; }
+    .approved .critic-reason { color: #3b6d11; }
+    .rejected .critic-reason { color: #712B13; }
+
+    /* Outline + story */
+    .outline-box {
+      background: #f9f8ff; border: 0.5px solid #c8c4f0;
+      border-radius: 8px; padding: 14px 16px; margin-bottom: 20px;
+      font-size: 13px; line-height: 1.7; color: #3C3489; white-space: pre-line;
+    }
     .story-text { font-size: 14px; line-height: 1.85; color: #2a2a2a; }
     .story-text p { margin-bottom: 16px; }
     .story-text p:last-child { margin-bottom: 0; }
 
-    .cost-table {
-      width: 100%;
-      font-size: 12px;
-      border-collapse: collapse;
-      margin-bottom: 16px;
-    }
-    .cost-table th {
-      text-align: left;
-      color: #888;
-      font-weight: 500;
-      padding: 4px 8px 4px 0;
-      border-bottom: 0.5px solid #eee;
-    }
-    .cost-table td {
-      padding: 6px 8px 6px 0;
-      border-bottom: 0.5px solid #f0f0f0;
-      color: #333;
-    }
-    .cost-table tr:last-child td { border-bottom: none; font-weight: 500; }
-    .cost-table .planner-row td:first-child { color: #534AB7; }
-    .cost-table .writer-row  td:first-child { color: #0F6E56; }
-
     .divider { height: 0.5px; background: #e8e8e8; margin: 16px 0; }
-
     .placeholder { font-size: 13px; color: #bbb; font-style: italic; }
     .error-text  { font-size: 13px; color: #a32d2d; }
 
@@ -174,9 +131,9 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    @media (max-width: 640px) {
-      .agent-cards  { grid-template-columns: 1fr; }
-      .input-grid   { grid-template-columns: 1fr; }
+    @media (max-width: 700px) {
+      .agent-cards { grid-template-columns: 1fr; }
+      .input-grid  { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -193,16 +150,16 @@
     <div class="section-label">Story setup</div>
     <div class="input-grid">
       <div class="input-group">
-        <label for="startState">Start state</label>
+        <label>Start state</label>
         <textarea id="startState" rows="2">John was born in an orphanage in Texas in 1975.</textarea>
       </div>
       <div class="input-group">
-        <label for="endState">End state</label>
+        <label>End state</label>
         <textarea id="endState" rows="2">John was confirmed as Health Minister for the new government in India.</textarea>
       </div>
     </div>
     <div class="input-group">
-      <label for="facts">Facts <span style="color:#bbb;font-weight:400">— one per line, append only</span></label>
+      <label>Facts <span style="color:#bbb;font-weight:400">— one per line, append only</span></label>
       <textarea id="facts" rows="6">John has a rich uncle in Houston who takes an interest in him at age 7
 John shows exceptional talent in golf from age 9
 John's uncle sponsors his education at a boarding school in the UK
@@ -211,14 +168,13 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
     </div>
   </div>
 
-  <!-- Agent Settings -->
+  <!-- Three Agent Cards -->
   <div class="agent-cards">
 
-    <!-- Planner -->
     <div class="agent-card">
       <div class="agent-label planner-label">Planner agent</div>
       <div class="control-group">
-        <label for="plannerModel">Model</label>
+        <label>Model</label>
         <select id="plannerModel">
           <option value="claude-sonnet-4-6" selected>claude-sonnet-4-6</option>
           <option value="claude-opus-4-6">claude-opus-4-6</option>
@@ -226,7 +182,7 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
         </select>
       </div>
       <div class="control-group">
-        <label>Temperature &mdash; <span id="plannerTempLabel">0.3</span></label>
+        <label>Temperature — <span id="plannerTempLabel">0.3</span></label>
         <div class="slider-wrap">
           <span style="font-size:11px;color:#aaa">precise</span>
           <input type="range" id="plannerTemp" min="0" max="10" value="3" step="1">
@@ -235,11 +191,30 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
       </div>
     </div>
 
-    <!-- Writer -->
+    <div class="agent-card">
+      <div class="agent-label critic-label">Critic agent</div>
+      <div class="control-group">
+        <label>Model</label>
+        <select id="criticModel">
+          <option value="claude-sonnet-4-6" selected>claude-sonnet-4-6</option>
+          <option value="claude-opus-4-6">claude-opus-4-6</option>
+          <option value="claude-haiku-4-5-20251001">claude-haiku-4-5-20251001</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label>Temperature — <span id="criticTempLabel">0.1</span></label>
+        <div class="slider-wrap">
+          <span style="font-size:11px;color:#aaa">precise</span>
+          <input type="range" id="criticTemp" min="0" max="10" value="1" step="1">
+          <span style="font-size:11px;color:#aaa">creative</span>
+        </div>
+      </div>
+    </div>
+
     <div class="agent-card">
       <div class="agent-label writer-label">Writer agent</div>
       <div class="control-group">
-        <label for="writerModel">Model</label>
+        <label>Model</label>
         <select id="writerModel">
           <option value="claude-opus-4-6" selected>claude-opus-4-6</option>
           <option value="claude-sonnet-4-6">claude-sonnet-4-6</option>
@@ -247,7 +222,7 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
         </select>
       </div>
       <div class="control-group">
-        <label>Temperature &mdash; <span id="writerTempLabel">0.8</span></label>
+        <label>Temperature — <span id="writerTempLabel">0.8</span></label>
         <div class="slider-wrap">
           <span style="font-size:11px;color:#aaa">precise</span>
           <input type="range" id="writerTemp" min="0" max="10" value="8" step="1">
@@ -259,7 +234,7 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
   </div>
 
   <!-- Story Length + Generate -->
-  <div class="card" style="padding: 16px 24px;">
+  <div class="card" style="padding:16px 24px;">
     <div class="bottom-row">
       <div class="length-group">
         <label>Story length</label>
@@ -280,44 +255,41 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
     <div id="costSection" style="display:none">
       <table class="cost-table">
         <thead>
-          <tr>
-            <th>Agent</th>
-            <th>Model</th>
-            <th>Input</th>
-            <th>Output</th>
-            <th>Cost</th>
-            <th>Time</th>
-          </tr>
+          <tr><th>Agent</th><th>Model</th><th>Input</th><th>Output</th><th>Cost</th><th>Time</th></tr>
         </thead>
         <tbody>
           <tr class="planner-row">
-            <td>Planner</td>
-            <td id="cPlannerModel">—</td>
-            <td id="cPlannerInput">—</td>
-            <td id="cPlannerOutput">—</td>
-            <td id="cPlannerCost">—</td>
-            <td id="cPlannerTime">—</td>
+            <td>Planner <span id="plannerAttemptsBadge" style="font-size:11px;color:#888"></span></td>
+            <td id="cPlannerModel">—</td><td id="cPlannerInput">—</td>
+            <td id="cPlannerOutput">—</td><td id="cPlannerCost">—</td><td id="cPlannerTime">—</td>
+          </tr>
+          <tr class="critic-row">
+            <td>Critic</td>
+            <td id="cCriticModel">—</td><td id="cCriticInput">—</td>
+            <td id="cCriticOutput">—</td><td id="cCriticCost">—</td><td id="cCriticTime">—</td>
           </tr>
           <tr class="writer-row">
             <td>Writer</td>
-            <td id="cWriterModel">—</td>
-            <td id="cWriterInput">—</td>
-            <td id="cWriterOutput">—</td>
-            <td id="cWriterCost">—</td>
-            <td id="cWriterTime">—</td>
+            <td id="cWriterModel">—</td><td id="cWriterInput">—</td>
+            <td id="cWriterOutput">—</td><td id="cWriterCost">—</td><td id="cWriterTime">—</td>
           </tr>
           <tr>
             <td colspan="4">Total</td>
-            <td id="cTotalCost">—</td>
-            <td id="cTotalTime">—</td>
+            <td id="cTotalCost">—</td><td id="cTotalTime">—</td>
           </tr>
         </tbody>
       </table>
       <div class="divider"></div>
     </div>
 
+    <div id="criticSection" style="display:none">
+      <div class="agent-label critic-label" style="margin-bottom:10px">Critic decisions</div>
+      <div class="critic-log" id="criticLog"></div>
+      <div class="divider"></div>
+    </div>
+
     <div id="outlineSection" style="display:none">
-      <div class="agent-label planner-label" style="margin-bottom:10px">Planner outline</div>
+      <div class="agent-label planner-label" style="margin-bottom:10px">Approved outline</div>
       <div class="outline-box" id="outlineBox"></div>
       <div class="agent-label writer-label" style="margin-bottom:10px">Generated story</div>
     </div>
@@ -330,15 +302,19 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
 </div>
 
 <script>
-  // Temperature sliders
-  document.getElementById('plannerTemp').addEventListener('input', function() {
-    document.getElementById('plannerTempLabel').textContent = (this.value / 10).toFixed(1);
-  });
-  document.getElementById('writerTemp').addEventListener('input', function() {
-    document.getElementById('writerTempLabel').textContent = (this.value / 10).toFixed(1);
-  });
+  // Sliders
+  function bindSlider(sliderId, labelId) {
+    const slider = document.getElementById(sliderId);
+    const label  = document.getElementById(labelId);
+    slider.addEventListener('input', () => {
+      label.textContent = (slider.value / 10).toFixed(1);
+    });
+  }
+  bindSlider('plannerTemp', 'plannerTempLabel');
+  bindSlider('criticTemp',  'criticTempLabel');
+  bindSlider('writerTemp',  'writerTempLabel');
 
-  // Story length pills
+  // Length pills
   let selectedLength = 'medium';
   document.getElementById('lengthGroup').querySelectorAll('.pill').forEach(pill => {
     pill.addEventListener('click', () => {
@@ -354,6 +330,8 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
     const facts              = document.getElementById('facts').value.trim();
     const plannerModel       = document.getElementById('plannerModel').value;
     const plannerTemperature = parseFloat((document.getElementById('plannerTemp').value / 10).toFixed(1));
+    const criticModel        = document.getElementById('criticModel').value;
+    const criticTemperature  = parseFloat((document.getElementById('criticTemp').value / 10).toFixed(1));
     const writerModel        = document.getElementById('writerModel').value;
     const writerTemperature  = parseFloat((document.getElementById('writerTemp').value / 10).toFixed(1));
 
@@ -366,10 +344,11 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
     const btn = document.getElementById('generateBtn');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span>Generating...';
-    document.getElementById('costSection').style.display   = 'none';
+    document.getElementById('costSection').style.display    = 'none';
+    document.getElementById('criticSection').style.display  = 'none';
     document.getElementById('outlineSection').style.display = 'none';
     document.getElementById('storyOutput').innerHTML =
-      '<span class="placeholder">Running Planner then Writer — this may take 40–60 seconds...</span>';
+      '<span class="placeholder">Running Planner → Critic → Writer — this may take 60–90 seconds...</span>';
 
     try {
       const response = await fetch('/api/generate', {
@@ -378,13 +357,13 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
         body: JSON.stringify({
           startState, endState, facts,
           plannerModel, plannerTemperature,
+          criticModel,  criticTemperature,
           writerModel,  writerTemperature,
           storyLength: selectedLength
         })
       });
 
       const data = await response.json();
-
       if (data.error) {
         document.getElementById('storyOutput').innerHTML =
           '<span class="error-text">Error: ' + escapeHtml(data.error) + '</span>';
@@ -402,11 +381,20 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
 
   function renderOutput(data) {
     // Cost table
+    const attempts = data.plannerAttempts;
+    document.getElementById('plannerAttemptsBadge').textContent =
+      attempts > 1 ? '(' + attempts + ' attempts)' : '';
     document.getElementById('cPlannerModel').textContent  = data.plannerModel;
     document.getElementById('cPlannerInput').textContent  = data.plannerInputTokens.toLocaleString();
     document.getElementById('cPlannerOutput').textContent = data.plannerOutputTokens.toLocaleString();
     document.getElementById('cPlannerCost').textContent   = formatCost(data.plannerCostUsd);
     document.getElementById('cPlannerTime').textContent   = (data.plannerElapsedMs / 1000).toFixed(1) + 's';
+
+    document.getElementById('cCriticModel').textContent   = data.criticModel;
+    document.getElementById('cCriticInput').textContent   = data.criticInputTokens.toLocaleString();
+    document.getElementById('cCriticOutput').textContent  = data.criticOutputTokens.toLocaleString();
+    document.getElementById('cCriticCost').textContent    = formatCost(data.criticCostUsd);
+    document.getElementById('cCriticTime').textContent    = (data.criticElapsedMs / 1000).toFixed(1) + 's';
 
     document.getElementById('cWriterModel').textContent   = data.writerModel;
     document.getElementById('cWriterInput').textContent   = data.writerInputTokens.toLocaleString();
@@ -416,8 +404,22 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
 
     document.getElementById('cTotalCost').textContent     = formatCost(data.totalCostUsd);
     document.getElementById('cTotalTime').textContent     = (data.totalElapsedMs / 1000).toFixed(1) + 's';
+    document.getElementById('costSection').style.display  = 'block';
 
-    document.getElementById('costSection').style.display = 'block';
+    // Critic decisions
+    const log = document.getElementById('criticLog');
+    log.innerHTML = '';
+    data.criticDecisions.forEach((decision, i) => {
+      const isApproved = decision === 'APPROVED';
+      const entry = document.createElement('div');
+      entry.className = 'critic-entry ' + (isApproved ? 'approved' : 'rejected');
+      entry.innerHTML =
+        '<span class="critic-badge">' + (isApproved ? 'Approved' : 'Rejected') + '</span>' +
+        '<span class="critic-reason">Attempt ' + (i + 1) + ': ' +
+        escapeHtml(data.criticReasons[i]) + '</span>';
+      log.appendChild(entry);
+    });
+    document.getElementById('criticSection').style.display = 'block';
 
     // Outline
     document.getElementById('outlineBox').textContent = data.outline;
@@ -426,10 +428,8 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
     // Story
     const paragraphs = data.story
       .split(/\n\n+/)
-      .map(p => p.trim())
-      .filter(p => p.length > 0)
-      .map(p => '<p>' + escapeHtml(p) + '</p>')
-      .join('');
+      .map(p => p.trim()).filter(p => p.length > 0)
+      .map(p => '<p>' + escapeHtml(p) + '</p>').join('');
     document.getElementById('storyOutput').innerHTML =
       '<div class="story-text">' + paragraphs + '</div>';
   }

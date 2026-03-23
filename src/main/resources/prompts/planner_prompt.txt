@@ -9,6 +9,8 @@ END STATE:
 FACTS (in chronological order, all must be honoured):
 {{FACTS}}
 
+{{FEEDBACK_SECTION}}
+
 INSTRUCTIONS:
 - Produce exactly 5 to 7 milestones that form a plausible path from start to end
 - Every fact must be reflected in at least one milestone
