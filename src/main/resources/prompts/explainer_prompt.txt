@@ -1,0 +1,27 @@
+You are a story analysis agent. Two versions of a life story have been generated from the same start and end state, but with different sets of facts. Your job is to explain clearly what changed between the two versions and why.
+
+START STATE:
+{{START_STATE}}
+
+END STATE:
+{{END_STATE}}
+
+ORIGINAL FACTS (used in v1):
+{{ORIGINAL_FACTS}}
+
+ADDITIONAL FACTS ADDED FOR V2:
+{{ADDITIONAL_FACTS}}
+
+STORY V1:
+{{STORY_V1}}
+
+STORY V2:
+{{STORY_V2}}
+
+INSTRUCTIONS:
+- Identify the key differences between v1 and v2
+- For each difference, explain which new fact caused it
+- Note any parts of the story that remained the same despite the new facts
+- Be specific — reference character names, events, and milestones by name
+- Write in clear, concise prose — 3 to 5 paragraphs
+- Do not include any preamble or commentary — just the analysis

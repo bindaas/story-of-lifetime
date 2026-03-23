@@ -8,8 +8,7 @@ import java.util.stream.Collectors;
 
 /**
  * Orchestrates the full agent pipeline: Planner → Critic (loop) → Writer.
- * The Critic can reject the Planner's outline up to max_attempts times.
- * Each rejection is fed back into the Planner as context for a revised attempt.
+ * Also exposes /api/explain for the Explainer agent (v1 vs v2 diff).
  */
 @RestController
 @RequestMapping("/api")
@@ -40,7 +39,6 @@ public class StoryController {
             CriticAgent  critic  = new CriticAgent(config);
             WriterAgent  writer  = new WriterAgent(config);
 
-            // Accumulated metrics across all Planner + Critic attempts
             int    totalPlannerInput  = 0, totalPlannerOutput  = 0;
             double totalPlannerCost   = 0;
             long   totalPlannerMs     = 0;
@@ -48,21 +46,19 @@ public class StoryController {
             double totalCriticCost    = 0;
             long   totalCriticMs      = 0;
 
-            List<String> criticDecisions = new ArrayList<>();
-            List<String> criticReasons   = new ArrayList<>();
+            List<String> criticDecisions  = new ArrayList<>();
+            List<String> criticReasons    = new ArrayList<>();
 
-            String lastOutline       = null;
-            String lastCriticFeedback = "";
-            int    attempts          = 0;
-            boolean approved         = false;
+            String  lastOutline        = null;
+            String  lastCriticFeedback = "";
+            int     attempts           = 0;
+            boolean approved           = false;
 
-            // ── Planner → Critic loop ──────────────────────────────
             while (attempts < config.getCriticMaxAttempts() && !approved) {
                 attempts++;
                 System.out.printf("%n[Controller] Planner attempt %d of %d%n",
                         attempts, config.getCriticMaxAttempts());
 
-                // Planner produces outline (with any prior critic feedback)
                 PlannerResult plannerResult = planner.plan(worldModel, lastCriticFeedback);
                 lastOutline = plannerResult.getOutline();
 
@@ -71,7 +67,6 @@ public class StoryController {
                 totalPlannerCost   += plannerResult.getCostUsd();
                 totalPlannerMs     += plannerResult.getElapsedMs();
 
-                // Critic evaluates
                 CriticResult criticResult = critic.evaluate(worldModel, lastOutline, lastCriticFeedback);
 
                 totalCriticInput  += criticResult.getInputTokens();
@@ -96,7 +91,6 @@ public class StoryController {
                         config.getCriticMaxAttempts());
             }
 
-            // ── Writer ─────────────────────────────────────────────
             WriterResult writerResult = writer.write(worldModel, lastOutline);
 
             StoryResponse response = new StoryResponse(
@@ -120,6 +114,36 @@ public class StoryController {
             );
 
             return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity
+                    .internalServerError()
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/explain")
+    public ResponseEntity<?> explain(@RequestBody ExplainRequest request) {
+        try {
+            AppConfig      config    = new AppConfig();
+            ExplainerAgent explainer = new ExplainerAgent(config);
+
+            ExplainerResult result = explainer.explain(
+                    request.getStartState(),
+                    request.getEndState(),
+                    request.getOriginalFacts(),
+                    request.getAdditionalFacts(),
+                    request.getStoryV1(),
+                    request.getStoryV2()
+            );
+
+            return ResponseEntity.ok(Map.of(
+                    "explanation",  result.getExplanation(),
+                    "inputTokens",  String.valueOf(result.getInputTokens()),
+                    "outputTokens", String.valueOf(result.getOutputTokens()),
+                    "costUsd",      String.valueOf(result.getCostUsd()),
+                    "elapsedMs",    String.valueOf(result.getElapsedMs())
+            ));
 
         } catch (Exception e) {
             return ResponseEntity

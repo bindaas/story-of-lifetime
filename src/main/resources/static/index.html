@@ -349,6 +349,14 @@ John wins a full international golf scholarship to study abroad</textarea>
       Your story will appear here after you click Generate v1.
     </div>
 
+    <!-- Explainer diff -->
+    <div id="explainerSection" style="display:none">
+      <div class="divider"></div>
+      <div class="agent-label" style="color:#185FA5;margin-bottom:10px">Explainer — what changed and why</div>
+      <div id="explainerMeta" style="font-size:12px;color:#888;margin-bottom:12px"></div>
+      <div id="explainerText" style="font-size:14px;line-height:1.85;color:#2a2a2a"></div>
+    </div>
+
   </div>
 
 </div>
@@ -435,6 +443,7 @@ John wins a full international golf scholarship to study abroad</textarea>
 
     v1Data = {
       story:     document.getElementById('storyOutput').querySelector('.story-text').innerHTML,
+      storyText: document.getElementById('storyOutput').querySelector('.story-text').innerText,
       factCount: factLines.length
     };
 
@@ -492,6 +501,7 @@ John wins a full international golf scholarship to study abroad</textarea>
 
     setLoading('generateV2Btn', 'Generating v2...');
     hideOutputSections();
+    document.getElementById('explainerSection').style.display = 'none';
     document.getElementById('outputLabel').textContent = 'Output — v1 vs v2';
     setPlaceholder('Running Planner → Critic → Writer with expanded facts...');
 
@@ -504,6 +514,7 @@ John wins a full international golf scholarship to study abroad</textarea>
     renderOutlineSideBySide(data);
 
     // Side by side stories
+    const v2StoryText = data.story;
     document.getElementById('storyOutput').innerHTML =
       '<div class="stories-grid">' +
         '<div class="story-column">' +
@@ -514,17 +525,30 @@ John wins a full international golf scholarship to study abroad</textarea>
         '<div class="story-column">' +
           '<span class="story-version-label v2-label">v2</span>' +
           '<div class="story-fact-count">' + v2FactCount + ' facts</div>' +
-          '<div class="story-text">' + storyHtml(data.story) + '</div>' +
+          '<div class="story-text">' + storyHtml(v2StoryText) + '</div>' +
         '</div>' +
       '</div>';
 
-    releaseButton('generateV2Btn', 'Generate v2');
+    // Auto-trigger explainer
+    const originalFactLines   = document.getElementById('facts').value.trim()
+        .split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    const additionalFactLines = additionalFacts.trim()
+        .split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+    await callExplain(
+        cfg.startState,
+        cfg.endState,
+        originalFactLines,
+        additionalFactLines,
+        v1Data.storyText,
+        v2StoryText
+    );
   }
 
   // ── API call ─────────────────────────────────────────────
   async function callGenerate(payload) {
     try {
-      const res  = await fetch('/api/generate', {
+      const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -532,6 +556,43 @@ John wins a full international golf scholarship to study abroad</textarea>
       return await res.json();
     } catch (e) {
       return { error: e.message };
+    }
+  }
+
+  async function callExplain(startState, endState, originalFacts, additionalFacts, storyV1, storyV2) {
+    const section = document.getElementById('explainerSection');
+    const text    = document.getElementById('explainerText');
+    const meta    = document.getElementById('explainerMeta');
+
+    section.style.display = 'block';
+    text.innerHTML = '<span class="placeholder">Analysing what changed between v1 and v2...</span>';
+    meta.textContent = '';
+
+    try {
+      const res  = await fetch('/api/explain', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ startState, endState, originalFacts, additionalFacts, storyV1, storyV2 })
+      });
+      const data = await res.json();
+
+      if (data.error) {
+        text.innerHTML = '<span class="error-text">Error: ' + escapeHtml(data.error) + '</span>';
+        return;
+      }
+
+      const paragraphs = data.explanation
+        .split(/\n\n+/)
+        .map(p => p.trim()).filter(p => p.length > 0)
+        .map(p => '<p style="margin-bottom:14px">' + escapeHtml(p) + '</p>').join('');
+
+      text.innerHTML = paragraphs;
+      meta.textContent = parseFloat(data.costUsd) < 0.001
+        ? '< $0.001 · ' + (parseInt(data.elapsedMs) / 1000).toFixed(1) + 's'
+        : '$' + parseFloat(data.costUsd).toFixed(4) + ' · ' + (parseInt(data.elapsedMs) / 1000).toFixed(1) + 's';
+
+    } catch (e) {
+      text.innerHTML = '<span class="error-text">Network error: ' + escapeHtml(e.message) + '</span>';
     }
   }
 

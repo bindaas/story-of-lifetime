@@ -6,8 +6,7 @@ import java.util.Properties;
 
 /**
  * AppConfig loads defaults from system.properties.
- * Supports separate model + temperature for Planner, Critic, and Writer.
- * Can be overridden per-request with values from the browser form.
+ * Supports separate model + temperature for Planner, Critic, Writer, and Explainer.
  */
 public class AppConfig {
 
@@ -18,6 +17,8 @@ public class AppConfig {
     private final int    criticMaxAttempts;
     private final String writerModel;
     private final double writerTemperature;
+    private final String explainerModel;
+    private final double explainerTemperature;
     private final String storyLength;
     private final int    maxTokens;
 
@@ -25,16 +26,18 @@ public class AppConfig {
 
     /** Default constructor — reads from system.properties */
     public AppConfig() throws IOException {
-        Properties props        = loadProps();
-        this.plannerModel       = props.getProperty("planner.model",        "claude-sonnet-4-6");
-        this.plannerTemperature = Double.parseDouble(props.getProperty("planner.temperature",  "0.3"));
-        this.criticModel        = props.getProperty("critic.model",         "claude-sonnet-4-6");
-        this.criticTemperature  = Double.parseDouble(props.getProperty("critic.temperature",   "0.1"));
-        this.criticMaxAttempts  = Integer.parseInt(props.getProperty("critic.max_attempts",    "3"));
-        this.writerModel        = props.getProperty("writer.model",         "claude-opus-4-6");
-        this.writerTemperature  = Double.parseDouble(props.getProperty("writer.temperature",   "0.8"));
-        this.storyLength        = props.getProperty("writer.story_length",  "medium");
-        this.maxTokens          = Integer.parseInt(props.getProperty("claude.max_tokens",      "2048"));
+        Properties props          = loadProps();
+        this.plannerModel         = props.getProperty("planner.model",         "claude-sonnet-4-6");
+        this.plannerTemperature   = Double.parseDouble(props.getProperty("planner.temperature",   "0.3"));
+        this.criticModel          = props.getProperty("critic.model",          "claude-sonnet-4-6");
+        this.criticTemperature    = Double.parseDouble(props.getProperty("critic.temperature",    "0.1"));
+        this.criticMaxAttempts    = Integer.parseInt(props.getProperty("critic.max_attempts",     "3"));
+        this.writerModel          = props.getProperty("writer.model",          "claude-opus-4-6");
+        this.writerTemperature    = Double.parseDouble(props.getProperty("writer.temperature",    "0.8"));
+        this.explainerModel       = props.getProperty("explainer.model",       "claude-sonnet-4-6");
+        this.explainerTemperature = Double.parseDouble(props.getProperty("explainer.temperature", "0.3"));
+        this.storyLength          = props.getProperty("writer.story_length",   "medium");
+        this.maxTokens            = Integer.parseInt(props.getProperty("claude.max_tokens",       "2048"));
     }
 
     /** Per-request constructor — values come from the browser form */
@@ -42,16 +45,18 @@ public class AppConfig {
                      String criticModel,  double criticTemperature,
                      String writerModel,  double writerTemperature,
                      String storyLength) throws IOException {
-        Properties props        = loadProps();
-        this.plannerModel       = plannerModel;
-        this.plannerTemperature = plannerTemperature;
-        this.criticModel        = criticModel;
-        this.criticTemperature  = criticTemperature;
-        this.criticMaxAttempts  = Integer.parseInt(props.getProperty("critic.max_attempts", "3"));
-        this.writerModel        = writerModel;
-        this.writerTemperature  = writerTemperature;
-        this.storyLength        = storyLength;
-        this.maxTokens          = Integer.parseInt(props.getProperty("claude.max_tokens",   "2048"));
+        Properties props          = loadProps();
+        this.plannerModel         = plannerModel;
+        this.plannerTemperature   = plannerTemperature;
+        this.criticModel          = criticModel;
+        this.criticTemperature    = criticTemperature;
+        this.criticMaxAttempts    = Integer.parseInt(props.getProperty("critic.max_attempts",     "3"));
+        this.writerModel          = writerModel;
+        this.writerTemperature    = writerTemperature;
+        this.explainerModel       = props.getProperty("explainer.model",       "claude-sonnet-4-6");
+        this.explainerTemperature = Double.parseDouble(props.getProperty("explainer.temperature", "0.3"));
+        this.storyLength          = storyLength;
+        this.maxTokens            = Integer.parseInt(props.getProperty("claude.max_tokens",       "2048"));
     }
 
     private Properties loadProps() throws IOException {
@@ -62,14 +67,16 @@ public class AppConfig {
         return props;
     }
 
-    public String getPlannerModel()       { return plannerModel; }
-    public double getPlannerTemperature() { return plannerTemperature; }
-    public String getCriticModel()        { return criticModel; }
-    public double getCriticTemperature()  { return criticTemperature; }
-    public int    getCriticMaxAttempts()  { return criticMaxAttempts; }
-    public String getWriterModel()        { return writerModel; }
-    public double getWriterTemperature()  { return writerTemperature; }
-    public int    getMaxTokens()          { return maxTokens; }
+    public String getPlannerModel()         { return plannerModel; }
+    public double getPlannerTemperature()   { return plannerTemperature; }
+    public String getCriticModel()          { return criticModel; }
+    public double getCriticTemperature()    { return criticTemperature; }
+    public int    getCriticMaxAttempts()    { return criticMaxAttempts; }
+    public String getWriterModel()          { return writerModel; }
+    public double getWriterTemperature()    { return writerTemperature; }
+    public String getExplainerModel()       { return explainerModel; }
+    public double getExplainerTemperature() { return explainerTemperature; }
+    public int    getMaxTokens()            { return maxTokens; }
 
     public String getStoryLength() {
         return switch (storyLength.toLowerCase()) {

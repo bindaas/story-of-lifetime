@@ -71,7 +71,7 @@ generates prose      critic feedback attached
 | 4 | Planner agent — separate model + cost per agent | Done |
 | 5 | Critic agent — full Planner→Critic→Writer loop | Done |
 | 6 | Replan trigger — add facts, v1 vs v2 side by side | Done |
-| 7 | Diff and explainability — what changed and why | Upcoming |
+| 7 | Diff and explainability — Explainer agent, auto-triggered after v2 | Done |
 
 ---
 
