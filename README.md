@@ -70,7 +70,7 @@ generates prose      critic feedback attached
 | 3c | Cloud Run deployment, permanent public URL | Done |
 | 4 | Planner agent — separate model + cost per agent | Done |
 | 5 | Critic agent — full Planner→Critic→Writer loop | Done |
-| 6 | Replan trigger — add facts, v1 vs v2 side by side | Upcoming |
+| 6 | Replan trigger — add facts, v1 vs v2 side by side | Done |
 | 7 | Diff and explainability — what changed and why | Upcoming |
 
 ---

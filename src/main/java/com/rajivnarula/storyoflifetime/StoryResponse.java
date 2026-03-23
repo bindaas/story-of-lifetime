@@ -14,6 +14,7 @@ public class StoryResponse {
     private final int          factCount;
     private final String       storyLength;
     private final int          plannerAttempts;
+    private final boolean      plannerAccepted;  // true = Critic approved, false = max attempts exhausted
 
     // Critic decisions (one per Planner attempt)
     private final List<String> criticDecisions;  // "APPROVED" or "REJECTED"
@@ -41,7 +42,8 @@ public class StoryResponse {
     private final long   writerElapsedMs;
 
     public StoryResponse(String outline, String story, int factCount, String storyLength,
-                         int plannerAttempts, List<String> criticDecisions, List<String> criticReasons,
+                         int plannerAttempts, boolean plannerAccepted,
+                         List<String> criticDecisions, List<String> criticReasons,
                          String plannerModel, int plannerInputTokens, int plannerOutputTokens,
                          double plannerCostUsd, long plannerElapsedMs,
                          String criticModel, int criticInputTokens, int criticOutputTokens,
@@ -53,6 +55,7 @@ public class StoryResponse {
         this.factCount            = factCount;
         this.storyLength          = storyLength;
         this.plannerAttempts      = plannerAttempts;
+        this.plannerAccepted      = plannerAccepted;
         this.criticDecisions      = criticDecisions;
         this.criticReasons        = criticReasons;
         this.plannerModel         = plannerModel;
@@ -77,6 +80,7 @@ public class StoryResponse {
     public int          getFactCount()           { return factCount; }
     public String       getStoryLength()         { return storyLength; }
     public int          getPlannerAttempts()     { return plannerAttempts; }
+    public boolean      isPlannerAccepted()      { return plannerAccepted; }
     public List<String> getCriticDecisions()     { return criticDecisions; }
     public List<String> getCriticReasons()       { return criticReasons; }
 

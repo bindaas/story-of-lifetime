@@ -11,14 +11,11 @@
       font-size: 14px; background: #f5f4f0; color: #1a1a1a;
       min-height: 100vh; padding: 32px 20px 60px;
     }
-    .app { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+    .app { max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
     .app-header h1 { font-size: 20px; font-weight: 600; }
     .app-header p  { font-size: 13px; color: #888; margin-top: 4px; }
 
-    .card {
-      background: #fff; border: 0.5px solid #ddd;
-      border-radius: 12px; padding: 20px 24px;
-    }
+    .card { background: #fff; border: 0.5px solid #ddd; border-radius: 12px; padding: 20px 24px; }
     .agent-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
     .agent-card  { background: #fff; border: 0.5px solid #ddd; border-radius: 12px; padding: 20px 24px; }
 
@@ -46,10 +43,11 @@
     }
     textarea { resize: vertical; }
     textarea:focus, select:focus { outline: none; border-color: #999; background: #fff; }
+    textarea:disabled { opacity: 0.6; cursor: not-allowed; background: #f0f0f0; }
 
     .control-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-    .control-group label { font-size: 12px; color: #666; }
     .control-group:last-child { margin-bottom: 0; }
+    .control-group label { font-size: 12px; color: #666; }
 
     .slider-wrap { display: flex; align-items: center; gap: 8px; }
     .slider-wrap input[type=range] { flex: 1; accent-color: #1a1a1a; }
@@ -64,19 +62,33 @@
 
     .bottom-row {
       display: flex; align-items: center;
-      justify-content: space-between; gap: 16px; margin-top: 4px;
+      justify-content: space-between; gap: 16px;
     }
     .length-group { display: flex; align-items: center; gap: 10px; }
     .length-group label { font-size: 12px; color: #666; white-space: nowrap; }
 
-    .generate-btn {
-      padding: 10px 32px; background: #1a1a1a; color: #fff;
-      border: none; border-radius: 8px; font-size: 14px; font-weight: 500;
-      cursor: pointer; white-space: nowrap;
+    .btn {
+      padding: 9px 22px; border-radius: 8px; font-size: 13px; font-weight: 500;
+      cursor: pointer; white-space: nowrap; border: 0.5px solid #ddd;
       transition: background 0.15s, opacity 0.15s;
     }
-    .generate-btn:hover    { background: #333; }
-    .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary   { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+    .btn-primary:hover { background: #333; }
+    .btn-secondary { background: #fff; color: #1a1a1a; }
+    .btn-secondary:hover { background: #f5f4f0; }
+    .btn-v2 { background: #534AB7; color: #fff; border-color: #534AB7; }
+    .btn-v2:hover { background: #3C3489; }
+    .btn:disabled  { opacity: 0.5; cursor: not-allowed; }
+
+    /* Additional facts panel */
+    .additional-facts-panel {
+      background: #f9f8ff; border: 0.5px solid #c8c4f0;
+      border-radius: 12px; padding: 20px 24px;
+    }
+    .additional-facts-panel .section-label { color: #534AB7; }
+    .additional-facts-note {
+      font-size: 12px; color: #7F77DD; margin-bottom: 12px; line-height: 1.5;
+    }
 
     /* Cost table */
     .cost-table { width: 100%; font-size: 12px; border-collapse: collapse; margin-bottom: 16px; }
@@ -94,8 +106,7 @@
     .critic-log { margin-bottom: 16px; }
     .critic-entry {
       display: flex; align-items: flex-start; gap: 10px;
-      padding: 8px 12px; border-radius: 8px; margin-bottom: 6px;
-      font-size: 13px;
+      padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; font-size: 13px;
     }
     .critic-entry.approved { background: #eaf3de; }
     .critic-entry.rejected { background: #faece7; }
@@ -105,18 +116,30 @@
     }
     .approved .critic-badge { background: #3b6d11; color: #fff; }
     .rejected .critic-badge { background: #993C1D; color: #fff; }
-    .critic-reason { color: #444; line-height: 1.5; }
     .approved .critic-reason { color: #3b6d11; }
     .rejected .critic-reason { color: #712B13; }
+    .critic-reason { line-height: 1.5; }
 
-    /* Outline + story */
+    /* Outline */
     .outline-box {
-      background: #f9f8ff; border: 0.5px solid #c8c4f0;
-      border-radius: 8px; padding: 14px 16px; margin-bottom: 20px;
+      background: #f9f8ff; border: 0.5px solid #c8c4f0; border-radius: 8px;
+      padding: 14px 16px; margin-bottom: 20px;
       font-size: 13px; line-height: 1.7; color: #3C3489; white-space: pre-line;
     }
-    .story-text { font-size: 14px; line-height: 1.85; color: #2a2a2a; }
-    .story-text p { margin-bottom: 16px; }
+
+    /* Side by side stories */
+    .stories-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .story-column { display: flex; flex-direction: column; gap: 10px; }
+    .story-version-label {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.06em; padding: 4px 12px; border-radius: 20px;
+      display: inline-block; align-self: flex-start;
+    }
+    .v1-label { background: #eaf3de; color: #3b6d11; }
+    .v2-label { background: #EEEDFE; color: #534AB7; }
+    .story-fact-count { font-size: 11px; color: #aaa; margin-top: 2px; }
+    .story-text { font-size: 13px; line-height: 1.85; color: #2a2a2a; }
+    .story-text p { margin-bottom: 14px; }
     .story-text p:last-child { margin-bottom: 0; }
 
     .divider { height: 0.5px; background: #e8e8e8; margin: 16px 0; }
@@ -132,8 +155,9 @@
     @keyframes spin { to { transform: rotate(360deg); } }
 
     @media (max-width: 700px) {
-      .agent-cards { grid-template-columns: 1fr; }
-      .input-grid  { grid-template-columns: 1fr; }
+      .agent-cards  { grid-template-columns: 1fr; }
+      .input-grid   { grid-template-columns: 1fr; }
+      .stories-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -168,9 +192,8 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
     </div>
   </div>
 
-  <!-- Three Agent Cards -->
+  <!-- Agent Cards -->
   <div class="agent-cards">
-
     <div class="agent-card">
       <div class="agent-label planner-label">Planner agent</div>
       <div class="control-group">
@@ -230,10 +253,9 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
         </div>
       </div>
     </div>
-
   </div>
 
-  <!-- Story Length + Generate -->
+  <!-- Length + Generate -->
   <div class="card" style="padding:16px 24px;">
     <div class="bottom-row">
       <div class="length-group">
@@ -244,14 +266,35 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
           <div class="pill" data-value="long">Long</div>
         </div>
       </div>
-      <button class="generate-btn" id="generateBtn" onclick="generate()">Generate</button>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="btn btn-primary" id="generateBtn" onclick="generateV1()">Generate v1</button>
+        <button class="btn btn-secondary" id="saveV1Btn" onclick="saveV1()" style="display:none">Save as v1</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Facts (appears after v1 saved) -->
+  <div class="additional-facts-panel" id="additionalFactsPanel" style="display:none">
+    <div class="section-label">Additional facts — v2</div>
+    <p class="additional-facts-note">
+      Add new facts below. These will be appended to the original facts — the previous facts remain unchanged.
+    </p>
+    <div class="input-group" style="margin-bottom:14px">
+      <label>Additional facts <span style="color:#9b93e8;font-weight:400">— one per line</span></label>
+      <textarea id="additionalFacts" rows="4">John's uncle goes bankrupt when John is 8 and can no longer support him
+A civil war breaks out in Texas forcing John to flee north
+John wins a full international golf scholarship to study abroad</textarea>
+    </div>
+    <div style="display:flex;justify-content:flex-end">
+      <button class="btn btn-v2" id="generateV2Btn" onclick="generateV2()">Generate v2</button>
     </div>
   </div>
 
   <!-- Output -->
   <div class="card" id="outputCard">
-    <div class="section-label">Output</div>
+    <div class="section-label" id="outputLabel">Output</div>
 
+    <!-- Cost table -->
     <div id="costSection" style="display:none">
       <table class="cost-table">
         <thead>
@@ -282,40 +325,51 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
       <div class="divider"></div>
     </div>
 
+    <!-- Max attempts warning -->
+    <div id="maxAttemptsWarning" style="display:none;background:#faece7;border:0.5px solid #F0997B;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#712B13;">
+      <strong>Max attempts reached.</strong> The Critic rejected all 3 outlines. The story was written from the <strong>last attempt</strong> — it may contain unresolved contradictions.
+    </div>
+
+    <!-- Critic log -->
     <div id="criticSection" style="display:none">
       <div class="agent-label critic-label" style="margin-bottom:10px">Critic decisions</div>
       <div class="critic-log" id="criticLog"></div>
       <div class="divider"></div>
     </div>
 
+    <!-- Outline -->
     <div id="outlineSection" style="display:none">
       <div class="agent-label planner-label" style="margin-bottom:10px">Approved outline</div>
       <div class="outline-box" id="outlineBox"></div>
       <div class="agent-label writer-label" style="margin-bottom:10px">Generated story</div>
     </div>
 
+    <!-- Stories: single (v1 only) or side by side (v1 + v2) -->
     <div id="storyOutput" class="placeholder">
-      Your story will appear here after you click Generate.
+      Your story will appear here after you click Generate v1.
     </div>
+
   </div>
 
 </div>
 
 <script>
-  // Sliders
+  // ── State ────────────────────────────────────────────────
+  let v1Data      = null;  // saved v1 response
+  let v1Meta      = null;  // saved v1 cost/critic/outline data
+  let selectedLength = 'medium';
+
+  // ── Sliders ──────────────────────────────────────────────
   function bindSlider(sliderId, labelId) {
-    const slider = document.getElementById(sliderId);
-    const label  = document.getElementById(labelId);
-    slider.addEventListener('input', () => {
-      label.textContent = (slider.value / 10).toFixed(1);
-    });
+    const s = document.getElementById(sliderId);
+    const l = document.getElementById(labelId);
+    s.addEventListener('input', () => { l.textContent = (s.value / 10).toFixed(1); });
   }
   bindSlider('plannerTemp', 'plannerTempLabel');
   bindSlider('criticTemp',  'criticTempLabel');
   bindSlider('writerTemp',  'writerTempLabel');
 
-  // Length pills
-  let selectedLength = 'medium';
+  // ── Length pills ─────────────────────────────────────────
   document.getElementById('lengthGroup').querySelectorAll('.pill').forEach(pill => {
     pill.addEventListener('click', () => {
       document.querySelectorAll('#lengthGroup .pill').forEach(p => p.classList.remove('active'));
@@ -324,63 +378,165 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
     });
   });
 
-  async function generate() {
-    const startState         = document.getElementById('startState').value.trim();
-    const endState           = document.getElementById('endState').value.trim();
-    const facts              = document.getElementById('facts').value.trim();
-    const plannerModel       = document.getElementById('plannerModel').value;
-    const plannerTemperature = parseFloat((document.getElementById('plannerTemp').value / 10).toFixed(1));
-    const criticModel        = document.getElementById('criticModel').value;
-    const criticTemperature  = parseFloat((document.getElementById('criticTemp').value / 10).toFixed(1));
-    const writerModel        = document.getElementById('writerModel').value;
-    const writerTemperature  = parseFloat((document.getElementById('writerTemp').value / 10).toFixed(1));
+  // ── Collect form values ──────────────────────────────────
+  function getConfig() {
+    return {
+      startState:         document.getElementById('startState').value.trim(),
+      endState:           document.getElementById('endState').value.trim(),
+      plannerModel:       document.getElementById('plannerModel').value,
+      plannerTemperature: parseFloat((document.getElementById('plannerTemp').value / 10).toFixed(1)),
+      criticModel:        document.getElementById('criticModel').value,
+      criticTemperature:  parseFloat((document.getElementById('criticTemp').value / 10).toFixed(1)),
+      writerModel:        document.getElementById('writerModel').value,
+      writerTemperature:  parseFloat((document.getElementById('writerTemp').value / 10).toFixed(1)),
+      storyLength:        selectedLength
+    };
+  }
 
-    if (!startState || !endState || !facts) {
-      document.getElementById('storyOutput').innerHTML =
-        '<span class="error-text">Please fill in start state, end state, and at least one fact.</span>';
+  // ── Generate v1 ──────────────────────────────────────────
+  async function generateV1() {
+    const cfg   = getConfig();
+    const facts = document.getElementById('facts').value.trim();
+
+    if (!cfg.startState || !cfg.endState || !facts) {
+      setPlaceholder('Please fill in start state, end state, and at least one fact.');
       return;
     }
 
-    const btn = document.getElementById('generateBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>Generating...';
-    document.getElementById('costSection').style.display    = 'none';
-    document.getElementById('criticSection').style.display  = 'none';
-    document.getElementById('outlineSection').style.display = 'none';
-    document.getElementById('storyOutput').innerHTML =
-      '<span class="placeholder">Running Planner → Critic → Writer — this may take 60–90 seconds...</span>';
+    v1Data = null;
+    document.getElementById('saveV1Btn').style.display          = 'none';
+    document.getElementById('additionalFactsPanel').style.display = 'none';
+    document.getElementById('outputLabel').textContent           = 'Output';
 
+    setLoading('generateBtn', 'Generating v1...');
+    hideOutputSections();
+    setPlaceholder('Running Planner → Critic → Writer — this may take 60–90 seconds...');
+
+    const data = await callGenerate({ ...cfg, facts });
+    releaseButton('generateBtn', 'Generate v1');
+
+    if (data.error) { setError(data.error); return; }
+
+    renderCostAndCritic(data);
+    renderOutline(data);
+
+    // Show single story
+    document.getElementById('storyOutput').innerHTML =
+      '<div class="story-text">' + storyHtml(data.story) + '</div>';
+
+    // Show Save as v1 button
+    document.getElementById('saveV1Btn').style.display = 'inline-block';
+  }
+
+  // ── Save v1 ──────────────────────────────────────────────
+  function saveV1() {
+    const factLines = document.getElementById('facts').value.trim().split('\n')
+        .filter(l => l.trim().length > 0);
+
+    v1Data = {
+      story:     document.getElementById('storyOutput').querySelector('.story-text').innerHTML,
+      factCount: factLines.length
+    };
+
+    // Save the full metadata for side-by-side display later
+    v1Meta = {
+      plannerAttempts:      document.getElementById('plannerAttemptsBadge').textContent,
+      plannerModel:         document.getElementById('cPlannerModel').textContent,
+      plannerInput:         document.getElementById('cPlannerInput').textContent,
+      plannerOutput:        document.getElementById('cPlannerOutput').textContent,
+      plannerCost:          document.getElementById('cPlannerCost').textContent,
+      plannerTime:          document.getElementById('cPlannerTime').textContent,
+      criticModel:          document.getElementById('cCriticModel').textContent,
+      criticInput:          document.getElementById('cCriticInput').textContent,
+      criticOutput:         document.getElementById('cCriticOutput').textContent,
+      criticCost:           document.getElementById('cCriticCost').textContent,
+      criticTime:           document.getElementById('cCriticTime').textContent,
+      writerModel:          document.getElementById('cWriterModel').textContent,
+      writerInput:          document.getElementById('cWriterInput').textContent,
+      writerOutput:         document.getElementById('cWriterOutput').textContent,
+      writerCost:           document.getElementById('cWriterCost').textContent,
+      writerTime:           document.getElementById('cWriterTime').textContent,
+      totalCost:            document.getElementById('cTotalCost').textContent,
+      totalTime:            document.getElementById('cTotalTime').textContent,
+      criticLogHtml:        document.getElementById('criticLog').innerHTML,
+      outlineText:          document.getElementById('outlineBox').textContent
+    };
+
+    // Lock the original facts textarea
+    document.getElementById('facts').disabled = true;
+
+    // Show additional facts panel
+    document.getElementById('additionalFactsPanel').style.display = 'block';
+    document.getElementById('saveV1Btn').style.display = 'none';
+    document.getElementById('additionalFacts').focus();
+
+    // Scroll to additional facts
+    document.getElementById('additionalFactsPanel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // ── Generate v2 ──────────────────────────────────────────
+  async function generateV2() {
+    if (!v1Data) { return; }
+
+    const cfg            = getConfig();
+    const originalFacts  = document.getElementById('facts').value.trim();
+    const additionalFacts= document.getElementById('additionalFacts').value.trim();
+
+    if (!additionalFacts) {
+      document.getElementById('additionalFacts').focus();
+      return;
+    }
+
+    const allFacts = originalFacts + '\n' + additionalFacts;
+    const v2FactCount = allFacts.trim().split('\n').filter(l => l.trim().length > 0).length;
+
+    setLoading('generateV2Btn', 'Generating v2...');
+    hideOutputSections();
+    document.getElementById('outputLabel').textContent = 'Output — v1 vs v2';
+    setPlaceholder('Running Planner → Critic → Writer with expanded facts...');
+
+    const data = await callGenerate({ ...cfg, facts: allFacts });
+    releaseButton('generateV2Btn', 'Generate v2');
+
+    if (data.error) { setError(data.error); return; }
+
+    renderCostAndCriticSideBySide(data);
+    renderOutlineSideBySide(data);
+
+    // Side by side stories
+    document.getElementById('storyOutput').innerHTML =
+      '<div class="stories-grid">' +
+        '<div class="story-column">' +
+          '<span class="story-version-label v1-label">v1</span>' +
+          '<div class="story-fact-count">' + v1Data.factCount + ' facts</div>' +
+          '<div class="story-text">' + v1Data.story + '</div>' +
+        '</div>' +
+        '<div class="story-column">' +
+          '<span class="story-version-label v2-label">v2</span>' +
+          '<div class="story-fact-count">' + v2FactCount + ' facts</div>' +
+          '<div class="story-text">' + storyHtml(data.story) + '</div>' +
+        '</div>' +
+      '</div>';
+
+    releaseButton('generateV2Btn', 'Generate v2');
+  }
+
+  // ── API call ─────────────────────────────────────────────
+  async function callGenerate(payload) {
     try {
-      const response = await fetch('/api/generate', {
+      const res  = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          startState, endState, facts,
-          plannerModel, plannerTemperature,
-          criticModel,  criticTemperature,
-          writerModel,  writerTemperature,
-          storyLength: selectedLength
-        })
+        body: JSON.stringify(payload)
       });
-
-      const data = await response.json();
-      if (data.error) {
-        document.getElementById('storyOutput').innerHTML =
-          '<span class="error-text">Error: ' + escapeHtml(data.error) + '</span>';
-      } else {
-        renderOutput(data);
-      }
+      return await res.json();
     } catch (e) {
-      document.getElementById('storyOutput').innerHTML =
-        '<span class="error-text">Network error: ' + escapeHtml(e.message) + '</span>';
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = 'Generate';
+      return { error: e.message };
     }
   }
 
-  function renderOutput(data) {
-    // Cost table
+  // ── Render helpers ───────────────────────────────────────
+  function renderCostAndCritic(data) {
     const attempts = data.plannerAttempts;
     document.getElementById('plannerAttemptsBadge').textContent =
       attempts > 1 ? '(' + attempts + ' attempts)' : '';
@@ -389,49 +545,171 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
     document.getElementById('cPlannerOutput').textContent = data.plannerOutputTokens.toLocaleString();
     document.getElementById('cPlannerCost').textContent   = formatCost(data.plannerCostUsd);
     document.getElementById('cPlannerTime').textContent   = (data.plannerElapsedMs / 1000).toFixed(1) + 's';
-
     document.getElementById('cCriticModel').textContent   = data.criticModel;
     document.getElementById('cCriticInput').textContent   = data.criticInputTokens.toLocaleString();
     document.getElementById('cCriticOutput').textContent  = data.criticOutputTokens.toLocaleString();
     document.getElementById('cCriticCost').textContent    = formatCost(data.criticCostUsd);
     document.getElementById('cCriticTime').textContent    = (data.criticElapsedMs / 1000).toFixed(1) + 's';
-
     document.getElementById('cWriterModel').textContent   = data.writerModel;
     document.getElementById('cWriterInput').textContent   = data.writerInputTokens.toLocaleString();
     document.getElementById('cWriterOutput').textContent  = data.writerOutputTokens.toLocaleString();
     document.getElementById('cWriterCost').textContent    = formatCost(data.writerCostUsd);
     document.getElementById('cWriterTime').textContent    = (data.writerElapsedMs / 1000).toFixed(1) + 's';
-
     document.getElementById('cTotalCost').textContent     = formatCost(data.totalCostUsd);
     document.getElementById('cTotalTime').textContent     = (data.totalElapsedMs / 1000).toFixed(1) + 's';
     document.getElementById('costSection').style.display  = 'block';
+    document.getElementById('maxAttemptsWarning').style.display =
+      data.plannerAccepted ? 'none' : 'block';
 
-    // Critic decisions
     const log = document.getElementById('criticLog');
     log.innerHTML = '';
     data.criticDecisions.forEach((decision, i) => {
-      const isApproved = decision === 'APPROVED';
+      const approved = decision === 'APPROVED';
       const entry = document.createElement('div');
-      entry.className = 'critic-entry ' + (isApproved ? 'approved' : 'rejected');
+      entry.className = 'critic-entry ' + (approved ? 'approved' : 'rejected');
       entry.innerHTML =
-        '<span class="critic-badge">' + (isApproved ? 'Approved' : 'Rejected') + '</span>' +
+        '<span class="critic-badge">' + (approved ? 'Approved' : 'Rejected') + '</span>' +
         '<span class="critic-reason">Attempt ' + (i + 1) + ': ' +
         escapeHtml(data.criticReasons[i]) + '</span>';
       log.appendChild(entry);
     });
     document.getElementById('criticSection').style.display = 'block';
+  }
 
-    // Outline
+  function renderCostAndCriticSideBySide(v2) {
+    document.getElementById('maxAttemptsWarning').style.display =
+      v2.plannerAccepted ? 'none' : 'block';
+    // Cost table side by side
+    document.getElementById('costSection').style.display = 'block';
+    document.getElementById('costSection').innerHTML =
+      '<div class="stories-grid" style="margin-bottom:16px">' +
+        costTableHtml('v1', v1Meta) +
+        costTableHtml('v2', {
+          plannerAttempts: v2.plannerAttempts > 1 ? '(' + v2.plannerAttempts + ' attempts)' : '',
+          plannerModel:    v2.plannerModel,
+          plannerInput:    v2.plannerInputTokens.toLocaleString(),
+          plannerOutput:   v2.plannerOutputTokens.toLocaleString(),
+          plannerCost:     formatCost(v2.plannerCostUsd),
+          plannerTime:     (v2.plannerElapsedMs / 1000).toFixed(1) + 's',
+          criticModel:     v2.criticModel,
+          criticInput:     v2.criticInputTokens.toLocaleString(),
+          criticOutput:    v2.criticOutputTokens.toLocaleString(),
+          criticCost:      formatCost(v2.criticCostUsd),
+          criticTime:      (v2.criticElapsedMs / 1000).toFixed(1) + 's',
+          writerModel:     v2.writerModel,
+          writerInput:     v2.writerInputTokens.toLocaleString(),
+          writerOutput:    v2.writerOutputTokens.toLocaleString(),
+          writerCost:      formatCost(v2.writerCostUsd),
+          writerTime:      (v2.writerElapsedMs / 1000).toFixed(1) + 's',
+          totalCost:       formatCost(v2.totalCostUsd),
+          totalTime:       (v2.totalElapsedMs / 1000).toFixed(1) + 's'
+        }) +
+      '</div><div class="divider"></div>';
+
+    // Critic log side by side
+    const v2CriticHtml = criticLogHtml(v2.criticDecisions, v2.criticReasons);
+    document.getElementById('criticSection').style.display = 'block';
+    document.getElementById('criticSection').innerHTML =
+      '<div class="agent-label critic-label" style="margin-bottom:10px">Critic decisions</div>' +
+      '<div class="stories-grid">' +
+        '<div>' +
+          '<div class="story-version-label v1-label" style="margin-bottom:10px">v1</div>' +
+          '<div class="critic-log">' + v1Meta.criticLogHtml + '</div>' +
+        '</div>' +
+        '<div>' +
+          '<div class="story-version-label v2-label" style="margin-bottom:10px">v2</div>' +
+          '<div class="critic-log">' + v2CriticHtml + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="divider"></div>';
+  }
+
+  function costTableHtml(version, m) {
+    const labelClass = version === 'v1' ? 'v1-label' : 'v2-label';
+    return '<div>' +
+      '<span class="story-version-label ' + labelClass + '" style="margin-bottom:10px;display:inline-block">' + version + '</span>' +
+      '<table class="cost-table">' +
+        '<thead><tr><th>Agent</th><th>Model</th><th>In</th><th>Out</th><th>Cost</th><th>Time</th></tr></thead>' +
+        '<tbody>' +
+          '<tr class="planner-row"><td>Planner <span style="font-size:11px;color:#888">' + m.plannerAttempts + '</span></td>' +
+          '<td>' + m.plannerModel + '</td><td>' + m.plannerInput + '</td><td>' + m.plannerOutput + '</td>' +
+          '<td>' + m.plannerCost + '</td><td>' + m.plannerTime + '</td></tr>' +
+          '<tr class="critic-row"><td>Critic</td>' +
+          '<td>' + m.criticModel + '</td><td>' + m.criticInput + '</td><td>' + m.criticOutput + '</td>' +
+          '<td>' + m.criticCost + '</td><td>' + m.criticTime + '</td></tr>' +
+          '<tr class="writer-row"><td>Writer</td>' +
+          '<td>' + m.writerModel + '</td><td>' + m.writerInput + '</td><td>' + m.writerOutput + '</td>' +
+          '<td>' + m.writerCost + '</td><td>' + m.writerTime + '</td></tr>' +
+          '<tr><td colspan="4">Total</td><td>' + m.totalCost + '</td><td>' + m.totalTime + '</td></tr>' +
+        '</tbody>' +
+      '</table>' +
+    '</div>';
+  }
+
+  function criticLogHtml(decisions, reasons) {
+    return decisions.map((decision, i) => {
+      const approved = decision === 'APPROVED';
+      return '<div class="critic-entry ' + (approved ? 'approved' : 'rejected') + '">' +
+        '<span class="critic-badge">' + (approved ? 'Approved' : 'Rejected') + '</span>' +
+        '<span class="critic-reason">Attempt ' + (i + 1) + ': ' +
+        escapeHtml(reasons[i]) + '</span></div>';
+    }).join('');
+  }
+
+  function renderOutline(data) {
     document.getElementById('outlineBox').textContent = data.outline;
     document.getElementById('outlineSection').style.display = 'block';
+  }
 
-    // Story
-    const paragraphs = data.story
-      .split(/\n\n+/)
+  function renderOutlineSideBySide(v2) {
+    document.getElementById('outlineSection').style.display = 'block';
+    document.getElementById('outlineSection').innerHTML =
+      '<div class="agent-label planner-label" style="margin-bottom:10px">Approved outline</div>' +
+      '<div class="stories-grid">' +
+        '<div>' +
+          '<div class="story-version-label v1-label" style="margin-bottom:10px">v1</div>' +
+          '<div class="outline-box">' + escapeHtml(v1Meta.outlineText) + '</div>' +
+        '</div>' +
+        '<div>' +
+          '<div class="story-version-label v2-label" style="margin-bottom:10px">v2</div>' +
+          '<div class="outline-box">' + escapeHtml(v2.outline) + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="agent-label writer-label" style="margin-bottom:10px;margin-top:16px">Generated story</div>';
+  }
+
+  function storyHtml(story) {
+    return story.split(/\n\n+/)
       .map(p => p.trim()).filter(p => p.length > 0)
       .map(p => '<p>' + escapeHtml(p) + '</p>').join('');
+  }
+
+  function hideOutputSections() {
+    document.getElementById('costSection').style.display    = 'none';
+    document.getElementById('criticSection').style.display  = 'none';
+    document.getElementById('outlineSection').style.display = 'none';
+  }
+
+  function setPlaceholder(msg) {
     document.getElementById('storyOutput').innerHTML =
-      '<div class="story-text">' + paragraphs + '</div>';
+      '<span class="placeholder">' + escapeHtml(msg) + '</span>';
+  }
+
+  function setError(msg) {
+    document.getElementById('storyOutput').innerHTML =
+      '<span class="error-text">Error: ' + escapeHtml(msg) + '</span>';
+  }
+
+  function setLoading(btnId, msg) {
+    const btn = document.getElementById(btnId);
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>' + msg;
+  }
+
+  function releaseButton(btnId, label) {
+    const btn = document.getElementById(btnId);
+    btn.disabled = false;
+    btn.innerHTML = label;
   }
 
   function formatCost(usd) {
@@ -439,7 +717,8 @@ John befriends an Indian diplomat named Rajan Mehta during his residency</textar
   }
 
   function escapeHtml(str) {
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 </script>
 </body>

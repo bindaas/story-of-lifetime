@@ -92,7 +92,7 @@ public class StoryController {
             }
 
             if (!approved) {
-                System.out.printf("[Controller] Max attempts (%d) reached — using best outline%n",
+                System.out.printf("[Controller] Max attempts (%d) reached — using last outline%n",
                         config.getCriticMaxAttempts());
             }
 
@@ -105,6 +105,7 @@ public class StoryController {
                     facts.size(),
                     config.getStoryLengthRaw(),
                     attempts,
+                    approved,
                     criticDecisions,
                     criticReasons,
                     config.getPlannerModel(),
