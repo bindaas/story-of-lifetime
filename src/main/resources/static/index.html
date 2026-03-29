@@ -57,7 +57,7 @@
       font-size: 12px; cursor: pointer; background: #fafafa; color: #555;
       user-select: none; transition: background 0.1s, color 0.1s;
     }
-    .pill.active { background: #854F0B; color: #fff; border-color: #854F0B; }
+    .pill.active { background: #FAEEDA; color: #633806; border-color: #854F0B; }
 
     /* Overview + diagram two-column */
     .overview-grid {
@@ -352,9 +352,9 @@
       </div>
 
       <!-- Facts review -->
-      <div class="card" id="factsCard" style="display:none">
+      <div class="card" id="factsCard" style="display:none;background:#eaf3de;border-color:#9fe1cb">
         <div class="facts-header">
-          <label for="facts">Facts <span style="color:#bbb;font-weight:400">— review, edit, then approve</span></label>
+          <label for="facts" style="color:#3b6d11;font-weight:600">You review &amp; approve facts</label>
           <span class="approved-badge" id="approvedBadge">Approved</span>
         </div>
         <textarea id="facts" rows="8" placeholder="Click 'Generate facts' above to populate this field, or type your own facts — one per line."></textarea>
@@ -366,7 +366,7 @@
       <!-- Agent Cards (appear after facts approved) -->
       <div id="agentSection" style="display:none;flex-direction:column;gap:12px">
 
-        <div class="agent-card">
+        <div class="agent-card" style="background:#f4f3fe;border-color:#c8c4f0">
           <div class="agent-label planner-label">Planner agent</div>
           <div class="control-group">
             <label>Model</label>
@@ -386,7 +386,7 @@
           </div>
         </div>
 
-        <div class="agent-card">
+        <div class="agent-card" style="background:#fdf1ed;border-color:#f5c4b3">
           <div class="agent-label critic-label">Critic agent</div>
           <div class="control-group">
             <label>Model</label>
@@ -406,7 +406,7 @@
           </div>
         </div>
 
-        <div class="agent-card">
+        <div class="agent-card" style="background:#f0faf5;border-color:#9fe1cb">
           <div class="agent-label writer-label">Writer agent</div>
           <div class="control-group">
             <label>Model</label>
@@ -427,9 +427,9 @@
         </div>
 
         <!-- Story length + Generate -->
-        <div class="card" style="padding:14px 16px">
+        <div class="card" style="padding:14px 16px;background:#f9f8ff;border-color:#c8c4f0">
           <div class="length-group" style="margin-bottom:12px">
-            <span class="length-label">Story length</span>
+            <span class="length-label" style="color:#534AB7">Story length</span>
             <div class="radio-group" id="lengthGroup">
               <div class="pill" data-value="short">Short</div>
               <div class="pill active" data-value="medium">Medium</div>
@@ -438,7 +438,7 @@
           </div>
           <div style="display:flex;gap:10px">
             <button class="btn btn-primary" id="generateBtn" onclick="generateV1()" style="flex:1">Generate original story</button>
-            <button class="btn btn-secondary" id="saveV1Btn" onclick="saveV1()" style="display:none">Save original story</button>
+            <button class="btn btn-secondary" id="saveV1Btn" onclick="saveV1()" style="display:none">Add new facts →</button>
           </div>
         </div>
 
@@ -465,7 +465,7 @@ John wins a full international golf scholarship to study abroad</textarea>
       <div class="diagram-wrap">
         <div class="mermaid" style="font-size:12px">
 graph TD
-    A([Start + End state]) --> B[Fact Generator]
+    A([Beginning + Ending]) --> B[Fact Generator]
     B --> C([You review &amp; approve facts])
     C --> D[Planner]
     D --> E[Critic]
@@ -478,7 +478,7 @@ graph TD
     F2 --> H([Revised story])
     H -.-> I[Explainer]
 
-    style A fill:#f1efe8,stroke:#888780,color:#444441
+    style A fill:#fff,stroke:#ddd,color:#1a1a1a
     style B fill:#FAEEDA,stroke:#854F0B,color:#633806
     style C fill:#eaf3de,stroke:#3b6d11,color:#27500A
     style D fill:#EEEDFE,stroke:#534AB7,color:#3C3489
@@ -488,7 +488,7 @@ graph TD
     style D2 fill:#EEEDFE,stroke:#534AB7,color:#3C3489
     style E2 fill:#FAECE7,stroke:#993C1D,color:#712B13
     style F2 fill:#E1F5EE,stroke:#0F6E56,color:#085041
-    style H fill:#f1efe8,stroke:#888780,color:#444441
+    style H fill:#EEEDFE,stroke:#534AB7,color:#3C3489
     style I fill:#E6F1FB,stroke:#185FA5,color:#0C447C
         </div>
       </div>
@@ -571,17 +571,21 @@ graph TD
     selectedWorldType = el.dataset.value;
   }
 
-  function bindPills(groupId, callback) {
+  function bindPills(groupId, callback, activeBg, activeFill, activeColor) {
     document.getElementById(groupId).querySelectorAll('.pill').forEach(pill => {
       pill.addEventListener('click', () => {
-        document.querySelectorAll('#' + groupId + ' .pill').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('#' + groupId + ' .pill').forEach(p => {
+          p.classList.remove('active');
+          if (activeBg) { p.style.background = ''; p.style.borderColor = ''; p.style.color = ''; }
+        });
         pill.classList.add('active');
+        if (activeBg) { pill.style.background = activeFill; pill.style.borderColor = activeBg; pill.style.color = activeColor; }
         callback(pill.dataset.value);
       });
     });
   }
   bindPills('contradictionGroup', v => selectedContradiction = v);
-  bindPills('lengthGroup',        v => selectedLength        = v);
+  bindPills('lengthGroup',        v => selectedLength        = v, '#534AB7', '#EEEDFE', '#3C3489');
 
   function bindSlider(sliderId, labelId) {
     const s = document.getElementById(sliderId);
@@ -656,6 +660,7 @@ graph TD
     if (!cfg.startState || !cfg.endState || !facts) return;
     v1Data = null;
     document.getElementById('saveV1Btn').style.display            = 'none';
+    document.getElementById('generateBtn').textContent             = 'Generate original story';
     document.getElementById('additionalFactsPanel').style.display = 'none';
     document.getElementById('outputCard').style.display           = 'block';
     document.getElementById('outputLabel').textContent            = 'Output';
@@ -669,6 +674,7 @@ graph TD
     renderOutline(data);
     document.getElementById('storyOutput').innerHTML = '<div class="story-text">' + storyHtml(data.story) + '</div>';
     document.getElementById('saveV1Btn').style.display = 'inline-block';
+    document.getElementById('generateBtn').textContent = 'Re-generate original story';
   }
 
   function saveV1() {
