@@ -7,12 +7,47 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Orchestrates the full agent pipeline: Planner → Critic (loop) → Writer.
- * Also exposes /api/explain for the Explainer agent (v1 vs v2 diff).
+ * Orchestrates all agent pipelines:
+ *   POST /api/generate-facts  — FactGenerator (human reviews before proceeding)
+ *   POST /api/generate        — Planner → Critic loop → Writer
+ *   POST /api/explain         — Explainer (v1 vs v2 diff)
  */
 @RestController
 @RequestMapping("/api")
 public class StoryController {
+
+    // ── Fact Generator ────────────────────────────────────────────────────────
+
+    @PostMapping("/generate-facts")
+    public ResponseEntity<?> generateFacts(@RequestBody FactGenerateRequest request) {
+        try {
+            AppConfig            config    = new AppConfig();
+            FactGeneratorAgent   generator = new FactGeneratorAgent(config);
+
+            FactGeneratorResult result = generator.generate(
+                    request.getStartState().trim(),
+                    request.getEndState().trim(),
+                    request.getCreativity(),
+                    request.getContradiction(),
+                    request.getWorldType()
+            );
+
+            return ResponseEntity.ok(Map.of(
+                    "facts",        result.getFacts(),
+                    "inputTokens",  result.getInputTokens(),
+                    "outputTokens", result.getOutputTokens(),
+                    "costUsd",      result.getCostUsd(),
+                    "elapsedMs",    result.getElapsedMs()
+            ));
+
+        } catch (Exception e) {
+            return ResponseEntity
+                    .internalServerError()
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // ── Planner → Critic → Writer ─────────────────────────────────────────────
 
     @PostMapping("/generate")
     public ResponseEntity<?> generate(@RequestBody StoryRequest request) {
@@ -25,7 +60,8 @@ public class StoryController {
             WorldModel worldModel = new WorldModel(
                     request.getStartState().trim(),
                     request.getEndState().trim(),
-                    facts
+                    facts,
+                    request.getWorldType()
             );
 
             AppConfig config = new AppConfig(
@@ -121,6 +157,8 @@ public class StoryController {
                     .body(Map.of("error", e.getMessage()));
         }
     }
+
+    // ── Explainer ─────────────────────────────────────────────────────────────
 
     @PostMapping("/explain")
     public ResponseEntity<?> explain(@RequestBody ExplainRequest request) {

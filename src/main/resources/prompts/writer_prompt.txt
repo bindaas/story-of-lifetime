@@ -1,4 +1,4 @@
-You are a skilled storyteller. Your job is to write a compelling, plausible life story that follows a provided outline, connecting a start state to an end state, honouring every fact provided.
+You are a skilled storyteller. Your job is to write a compelling life story that follows a provided outline, connecting a start state to an end state, honouring every fact, and matching the world type.
 
 START STATE:
 {{START_STATE}}
@@ -12,12 +12,18 @@ FACTS (in chronological order, all must be honoured):
 OUTLINE TO FOLLOW:
 {{OUTLINE}}
 
+WORLD TYPE: {{WORLD_TYPE}}
+- grounded: Write in plain, honest prose. Realistic, human, understated. Like literary fiction.
+- realistic: Heightened but believable. Dramatic, cinematic, emotionally resonant. Like Forrest Gump.
+- fantastical: Weave in the impossible element naturally. The magic or sci-fi should feel real within the story's world. Like Harry Potter.
+- outlandish: Fully commit to the alternate universe. Different rules, different norms, epic in scale. Like Game of Thrones or Star Trek.
+
 INSTRUCTIONS:
 - Write the story in prose, in third person
 - The story must begin with the start state and end with the end state
 - Follow the outline milestones in order
 - Every fact must appear naturally woven into the narrative
-- The story should feel plausible and human
+- The world type must shape the prose style, vocabulary, and tone throughout
 - Length: {{STORY_LENGTH}}
 - Do not number the paragraphs
 - Do not include any preamble or commentary — just the story itself

@@ -25,6 +25,31 @@ A multi-agent AI web application that generates a life story from a fixed start 
 | 5 | Critic agent — full Planner→Critic→Writer loop | Done |
 | 6 | Replan trigger — v1 vs v2 side by side | Done |
 | 7 | Explainer agent — diff and explainability | Done |
+| 8 | Fact Generator agent — human-in-the-loop | Done |
+| 9 | World type — grounded to outlandish | Done |
+
+---
+
+## Agent Pipeline
+
+```
+FactGeneratorAgent  (creativity · contradiction · world type)
+         │
+         ▼
+Human reviews & edits facts  ← human-in-the-loop checkpoint
+         │  approved
+         ▼
+PlannerAgent  →  CriticAgent  →  (replan if rejected)
+                      │  approved
+                      ▼
+                 WriterAgent  →  Story v1
+                                    │  add more facts
+                                    ▼
+                              WriterAgent  →  Story v2
+                                                 │  automatic
+                                                 ▼
+                                           ExplainerAgent
+```
 
 ---
 
@@ -74,9 +99,9 @@ http://localhost:8080
 story-of-lifetime/
 ├── pom.xml
 ├── README.md
-├── CLAUDE.md                          ← Claude Code context
+├── CLAUDE.md                              ← Claude Code context
 ├── Dockerfile
-├── deploy.sh                          ← one command Cloud Run deploy
+├── deploy.sh                              ← one command Cloud Run deploy
 ├── facts/
 │   ├── start.txt
 │   ├── end.txt
@@ -86,6 +111,7 @@ story-of-lifetime/
         ├── resources/
         │   ├── system.properties
         │   ├── prompts/
+        │   │   ├── factgenerator_prompt.txt
         │   │   ├── planner_prompt.txt
         │   │   ├── critic_prompt.txt
         │   │   ├── writer_prompt.txt
@@ -96,11 +122,12 @@ story-of-lifetime/
         └── java/com/rajivnarula/storyoflifetime/
             ├── Main.java
             ├── StoryController.java
-            ├── StoryRequest.java
-            ├── StoryResponse.java
+            ├── StoryRequest.java / StoryResponse.java
+            ├── FactGenerateRequest.java
             ├── ExplainRequest.java
             ├── AppConfig.java
             ├── WorldModel.java
+            ├── FactGeneratorAgent.java / FactGeneratorResult.java
             ├── PlannerAgent.java  / PlannerResult.java
             ├── CriticAgent.java   / CriticResult.java
             ├── WriterAgent.java   / WriterResult.java
@@ -114,6 +141,8 @@ story-of-lifetime/
 Edit `src/main/resources/system.properties` — no recompile needed:
 
 ```properties
+factgenerator.model=claude-sonnet-4-6
+factgenerator.temperature=0.9
 planner.model=claude-sonnet-4-6
 planner.temperature=0.3
 critic.model=claude-sonnet-4-6

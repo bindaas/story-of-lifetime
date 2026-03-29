@@ -9,21 +9,24 @@ import okhttp3.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
- * WriterAgent generates full prose from the WorldModel and Planner outline.
- * Returns token usage and cost for independent tracking.
+ * FactGeneratorAgent generates a set of life facts connecting start to end state.
+ * Creativity and contradiction levels control the nature of the generated facts.
+ * Output is reviewed and optionally edited by a human before the pipeline proceeds.
  */
-public class WriterAgent {
+public class FactGeneratorAgent {
 
     private static final String API_URL     = "https://api.anthropic.com/v1/messages";
     private static final String API_KEY     =
             System.getenv("STORY_OF_LIFETIME_ANTHROPIC_API_KEY") != null
             ? System.getenv("STORY_OF_LIFETIME_ANTHROPIC_API_KEY")
             : System.getenv("ANTHROPIC_API_KEY");
-    private static final String PROMPT_FILE = "prompts/writer_prompt.txt";
+    private static final String PROMPT_FILE = "prompts/factgenerator_prompt.txt";
 
     private final AppConfig config;
 
@@ -35,68 +38,65 @@ public class WriterAgent {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public WriterAgent(AppConfig config) {
+    public FactGeneratorAgent(AppConfig config) {
         this.config = config;
     }
 
-    public WriterResult write(WorldModel worldModel, String outline) throws Exception {
-        String   prompt    = buildPrompt(worldModel, outline);
+    public FactGeneratorResult generate(String startState, String endState,
+                                        String creativity, String contradiction,
+                                        String worldType) throws Exception {
+
+        String   prompt    = buildPrompt(startState, endState, creativity, contradiction, worldType);
         long     startTime = System.currentTimeMillis();
         JsonNode root      = callClaude(prompt);
         long     elapsedMs = System.currentTimeMillis() - startTime;
 
-        String story        = root.path("content").get(0).path("text").asText();
+        String rawText      = root.path("content").get(0).path("text").asText();
         int    inputTokens  = root.path("usage").path("input_tokens").asInt(0);
         int    outputTokens = root.path("usage").path("output_tokens").asInt(0);
-        double costUsd      = calculateCost(config.getWriterModel(), inputTokens, outputTokens);
+        double costUsd      = calculateCost(config.getFactGeneratorModel(), inputTokens, outputTokens);
 
-        System.out.printf("[WriterAgent] model=%s input=%d output=%d cost=$%.5f elapsed=%dms%n",
-                config.getWriterModel(), inputTokens, outputTokens, costUsd, elapsedMs);
+        List<String> facts = Arrays.stream(rawText.split("\n"))
+                .map(String::trim)
+                .filter(line -> !line.isBlank())
+                .collect(Collectors.toList());
 
-        return new WriterResult(story, inputTokens, outputTokens, costUsd, elapsedMs);
+        System.out.printf("[FactGeneratorAgent] model=%s facts=%d input=%d output=%d cost=$%.5f elapsed=%dms%n",
+                config.getFactGeneratorModel(), facts.size(), inputTokens, outputTokens, costUsd, elapsedMs);
+
+        return new FactGeneratorResult(facts, inputTokens, outputTokens, costUsd, elapsedMs);
     }
 
     private double calculateCost(String model, int inputTokens, int outputTokens) {
         double inputPricePerM;
         double outputPricePerM;
-
         if (model.contains("opus")) {
-            inputPricePerM  = 15.00;
-            outputPricePerM = 75.00;
+            inputPricePerM = 15.00; outputPricePerM = 75.00;
         } else if (model.contains("haiku")) {
-            inputPricePerM  = 0.25;
-            outputPricePerM = 1.25;
+            inputPricePerM = 0.25;  outputPricePerM = 1.25;
         } else {
-            inputPricePerM  = 3.00;
-            outputPricePerM = 15.00;
+            inputPricePerM = 3.00;  outputPricePerM = 15.00;
         }
-
         return (inputTokens  / 1_000_000.0 * inputPricePerM)
              + (outputTokens / 1_000_000.0 * outputPricePerM);
     }
 
-    private String buildPrompt(WorldModel worldModel, String outline) throws IOException {
+    private String buildPrompt(String startState, String endState,
+                                String creativity, String contradiction,
+                                String worldType) throws IOException {
         String template = loadPromptTemplate();
-
-        List<String> facts = worldModel.getFacts();
-        StringBuilder factList = new StringBuilder();
-        for (int i = 0; i < facts.size(); i++) {
-            factList.append((i + 1)).append(". ").append(facts.get(i)).append("\n");
-        }
-
         return template
-                .replace("{{START_STATE}}",  worldModel.getStartState())
-                .replace("{{END_STATE}}",    worldModel.getEndState())
-                .replace("{{FACTS}}",        factList.toString().trim())
-                .replace("{{OUTLINE}}",      outline)
-                .replace("{{WORLD_TYPE}}",   worldModel.getWorldType())
-                .replace("{{STORY_LENGTH}}", config.getStoryLength());
+                .replace("{{START_STATE}}",   startState)
+                .replace("{{END_STATE}}",     endState)
+                .replace("{{CREATIVITY}}",    creativity)
+                .replace("{{CONTRADICTION}}", contradiction)
+                .replace("{{WORLD_TYPE}}",    worldType);
     }
 
     private String loadPromptTemplate() throws IOException {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(PROMPT_FILE)) {
             if (is == null) {
-                throw new IOException("Prompt file not found on classpath: " + PROMPT_FILE);
+                throw new IOException("Prompt file not found: " + PROMPT_FILE);
             }
             return new String(is.readAllBytes(), StandardCharsets.UTF_8);
         }
@@ -111,9 +111,9 @@ public class WriterAgent {
         }
 
         ObjectNode body = mapper.createObjectNode();
-        body.put("model",       config.getWriterModel());
+        body.put("model",       config.getFactGeneratorModel());
         body.put("max_tokens",  config.getMaxTokens());
-        body.put("temperature", config.getWriterTemperature());
+        body.put("temperature", config.getFactGeneratorTemperature());
 
         ArrayNode messages = mapper.createArrayNode();
         ObjectNode message  = mapper.createObjectNode();

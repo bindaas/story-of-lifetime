@@ -18,10 +18,7 @@
     .header h1 { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
     .header p  { font-size: 13px; color: #888; }
     .header-meta { display: flex; gap: 20px; margin-top: 12px; flex-wrap: wrap; }
-    .header-meta a {
-      font-size: 12px; color: #185FA5; text-decoration: none;
-      display: flex; align-items: center; gap: 4px;
-    }
+    .header-meta a { font-size: 12px; color: #185FA5; text-decoration: none; }
     .header-meta a:hover { text-decoration: underline; }
     .back-link {
       display: inline-flex; align-items: center; gap: 6px;
@@ -30,166 +27,73 @@
     .back-link:hover { text-decoration: underline; }
 
     .card { background: #fff; border: 0.5px solid #ddd; border-radius: 12px; padding: 24px 28px; }
-
-    .section-title {
-      font-size: 13px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.06em; margin-bottom: 16px;
-    }
-    .planner-color  { color: #534AB7; }
-    .critic-color   { color: #993C1D; }
-    .writer-color   { color: #0F6E56; }
-    .explainer-color{ color: #185FA5; }
-    .gray-color     { color: #888780; }
-
     h2 { font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #1a1a1a; }
     p  { font-size: 14px; line-height: 1.75; color: #333; margin-bottom: 10px; }
     p:last-child { margin-bottom: 0; }
 
-    /* Agent cards grid */
+    /* Agent grid */
     .agent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .agent-card {
-      border-radius: 8px; padding: 14px 16px;
-      border: 0.5px solid #e8e8e8;
-    }
+    .agent-card { border-radius: 8px; padding: 14px 16px; border: 0.5px solid #e8e8e8; }
     .agent-card h3 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
     .agent-card p  { font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 4px; }
     .agent-card .meta { font-size: 11px; color: #999; margin-top: 6px; }
-    .planner-card  { background: #f4f3fe; border-color: #c8c4f0; }
-    .critic-card   { background: #fdf1ed; border-color: #f5c4b3; }
-    .writer-card   { background: #f0faf5; border-color: #9fe1cb; }
-    .explainer-card{ background: #e8f2fc; border-color: #b5d4f4; }
+    .factgen-card   { background: #fffbf5; border-color: #FAC775; }
+    .planner-card   { background: #f4f3fe; border-color: #c8c4f0; }
+    .critic-card    { background: #fdf1ed; border-color: #f5c4b3; }
+    .writer-card    { background: #f0faf5; border-color: #9fe1cb; }
+    .explainer-card { background: #e8f2fc; border-color: #b5d4f4; }
+    .factgen-color   { color: #854F0B; }
+    .planner-color   { color: #534AB7; }
+    .critic-color    { color: #993C1D; }
+    .writer-color    { color: #0F6E56; }
+    .explainer-color { color: #185FA5; }
 
-    /* Pipeline flow */
-    .mermaid { margin: 0 auto; }
-    .diagram-wrap {
-      background: #fafafa; border-radius: 8px;
-      padding: 20px; border: 0.5px solid #eee;
-      overflow-x: auto;
-    }
+    /* Diagram */
+    .diagram-wrap { background: #fafafa; border-radius: 8px; padding: 20px; border: 0.5px solid #eee; overflow-x: auto; }
 
-    /* Stack table */
+    /* Tables */
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th {
-      text-align: left; padding: 8px 12px;
-      background: #1a1a1a; color: #fff;
-      font-weight: 500; font-size: 12px;
-    }
+    th { text-align: left; padding: 8px 12px; background: #1a1a1a; color: #fff; font-weight: 500; font-size: 12px; }
     td { padding: 8px 12px; border-bottom: 0.5px solid #f0f0f0; color: #333; }
     tr:nth-child(even) td { background: #fafafa; }
     tr:last-child td { border-bottom: none; }
     td:first-child { font-weight: 500; color: #1a1a1a; white-space: nowrap; }
 
-    /* Cost table model name colors */
-    .opus-color   { color: #534AB7; }
-    .sonnet-color { color: #0F6E56; }
-    .haiku-color  { color: #993C1D; }
+    /* World type grid */
+    .world-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-top: 12px; }
+    .world-card { border-radius: 8px; padding: 12px 14px; border: 0.5px solid #e8e8e8; background: #fafafa; }
+    .world-card h4 { font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #1a1a1a; }
+    .world-card p  { font-size: 11px; color: #666; line-height: 1.5; margin-bottom: 4px; }
+    .world-card .eg { font-size: 10px; color: #aaa; font-style: italic; }
 
     /* Design decisions */
-    .decision {
-      border-left: 3px solid #534AB7; padding: 10px 14px;
-      background: #f9f8ff; border-radius: 0 6px 6px 0;
-      margin-bottom: 10px;
-    }
+    .decision { border-left: 3px solid #534AB7; padding: 10px 14px; background: #f9f8ff; border-radius: 0 6px 6px 0; margin-bottom: 10px; }
     .decision strong { font-size: 13px; color: #3C3489; display: block; margin-bottom: 4px; }
     .decision p { font-size: 13px; color: #555; margin: 0; line-height: 1.6; }
 
-    /* Footer */
-    .footer {
-      text-align: center; font-size: 12px; color: #aaa;
-      border-top: 0.5px solid #e8e8e8; padding-top: 20px;
-    }
+    /* Human in the loop */
+    .hitl-box { background: #eaf3de; border: 0.5px solid #9fe1cb; border-radius: 8px; padding: 14px 16px; margin-top: 12px; }
+    .hitl-box p { font-size: 13px; color: #3b6d11; margin: 0; line-height: 1.6; }
+
+    .footer { text-align: center; font-size: 12px; color: #aaa; border-top: 0.5px solid #e8e8e8; padding-top: 20px; }
 
     @media (max-width: 600px) {
       .agent-grid { grid-template-columns: 1fr; }
+      .world-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
 <body>
 <div class="page">
 
-  <!-- Back link -->
   <a href="/" class="back-link">← Back to app</a>
 
-  <!-- Header -->
   <div class="header">
     <h1>Story of a Lifetime</h1>
     <p>Architecture &amp; Design — One Pager</p>
     <div class="header-meta">
-      <a href="https://story-of-lifetime-ii73f77uuq-uc.a.run.app" target="_blank">
-        Live demo ↗
-      </a>
-      <a href="https://github.com/bindaas/story-of-lifetime" target="_blank">
-        GitHub ↗
-      </a>
-    </div>
-  </div>
-
-  <!-- Overview -->
-  <div class="card">
-    <h2>Overview</h2>
-    <p>
-      Story of a Lifetime is a multi-agent AI web application. Given a fixed start state,
-      a fixed end state, and a human-provided list of facts, the system generates a plausible
-      life story connecting them.
-    </p>
-    <p>
-      When new facts are added, the agent pipeline replans and produces a revised story —
-      making visible exactly where and why the narrative diverged. The project demonstrates
-      core AI Agent concepts: goal-directed planning, world model management, multi-agent
-      coordination, a critic-driven feedback loop, and environment interaction through
-      an append-only fact file.
-    </p>
-  </div>
-
-  <!-- Agent Pipeline Diagram -->
-  <div class="card">
-    <h2>Agent pipeline</h2>
-    <div class="diagram-wrap">
-      <div class="mermaid">
-graph TD
-    A([Browser form]) --> B[StoryController]
-    B --> C[PlannerAgent\nbuilds outline]
-    C --> D[CriticAgent\nevaluates outline]
-    D -->|rejected + reason| C
-    D -->|approved| E[WriterAgent\ngenerates prose]
-    E --> F([Response to browser])
-    F -.->|v2 only| G[ExplainerAgent\ndiff analysis]
-
-    style A fill:#f1efe8,stroke:#888,color:#1a1a1a
-    style B fill:#f1efe8,stroke:#888,color:#1a1a1a
-    style C fill:#EEEDFE,stroke:#534AB7,color:#3C3489
-    style D fill:#FAECE7,stroke:#993C1D,color:#712B13
-    style E fill:#E1F5EE,stroke:#0F6E56,color:#085041
-    style F fill:#f1efe8,stroke:#888,color:#1a1a1a
-    style G fill:#E6F1FB,stroke:#185FA5,color:#0C447C
-      </div>
-    </div>
-  </div>
-
-  <!-- Agents -->
-  <div class="card">
-    <h2>Agents</h2>
-    <div class="agent-grid">
-      <div class="agent-card planner-card">
-        <h3 class="planner-color">Planner</h3>
-        <p>Reads the world model and produces a structured 5–7 milestone outline. On retry attempts, the Critic's rejection reason is injected so the Planner knows exactly what to fix.</p>
-        <div class="meta">Default: claude-sonnet-4-6 · temp 0.3</div>
-      </div>
-      <div class="agent-card critic-card">
-        <h3 class="critic-color">Critic</h3>
-        <p>Evaluates the Planner's outline for timeline plausibility, fact consistency, and logical gaps. Returns APPROVED or REJECTED with a specific reason. Max 3 attempts before falling back to last outline.</p>
-        <div class="meta">Default: claude-sonnet-4-6 · temp 0.1</div>
-      </div>
-      <div class="agent-card writer-card">
-        <h3 class="writer-color">Writer</h3>
-        <p>Takes the approved outline and generates full prose. Never sees a rejected outline. Higher temperature produces more creative, varied storytelling.</p>
-        <div class="meta">Default: claude-opus-4-6 · temp 0.8</div>
-      </div>
-      <div class="agent-card explainer-card">
-        <h3 class="explainer-color">Explainer</h3>
-        <p>Runs automatically after v2 is generated. Compares both stories, identifies what changed, and explains which new facts caused each divergence.</p>
-        <div class="meta">Default: claude-sonnet-4-6 · temp 0.3</div>
-      </div>
+      <a href="https://story-of-lifetime-ii73f77uuq-uc.a.run.app" target="_blank">Live demo ↗</a>
+      <a href="https://github.com/bindaas/story-of-lifetime" target="_blank">GitHub ↗</a>
     </div>
   </div>
 
@@ -217,9 +121,10 @@ graph TD
     <table>
       <thead><tr><th>Method</th><th>Path</th><th>What it does</th></tr></thead>
       <tbody>
-        <tr><td>POST</td><td>/api/generate</td><td>Runs Planner → Critic loop → Writer. Returns outline, story, critic decisions, and per-agent cost breakdown.</td></tr>
-        <tr><td>POST</td><td>/api/explain</td><td>Runs Explainer on v1 vs v2 stories. Returns diff analysis text and cost.</td></tr>
-        <tr><td>GET</td><td>/</td><td>Serves the single-page application (index.html)</td></tr>
+        <tr><td>POST</td><td>/api/generate-facts</td><td>Runs FactGeneratorAgent. Returns fact list for human review.</td></tr>
+        <tr><td>POST</td><td>/api/generate</td><td>Runs Planner → Critic loop → Writer. Returns outline, story, critic decisions, per-agent cost.</td></tr>
+        <tr><td>POST</td><td>/api/explain</td><td>Runs Explainer on v1 vs v2. Returns diff analysis and cost.</td></tr>
+        <tr><td>GET</td><td>/</td><td>Single-page application (index.html)</td></tr>
         <tr><td>GET</td><td>/architecture.html</td><td>This document</td></tr>
       </tbody>
     </table>
@@ -232,39 +137,34 @@ graph TD
     <table style="margin-top:12px">
       <thead><tr><th>Model</th><th>Input per 1M tokens</th><th>Output per 1M tokens</th></tr></thead>
       <tbody>
-        <tr>
-          <td class="opus-color">claude-opus-4-6</td>
-          <td>$15.00</td><td>$75.00</td>
-        </tr>
-        <tr>
-          <td class="sonnet-color">claude-sonnet-4-6</td>
-          <td>$3.00</td><td>$15.00</td>
-        </tr>
-        <tr>
-          <td class="haiku-color">claude-haiku-4-5-20251001</td>
-          <td>$0.25</td><td>$1.25</td>
-        </tr>
+        <tr><td style="color:#534AB7">claude-opus-4-6</td><td>$15.00</td><td>$75.00</td></tr>
+        <tr><td style="color:#0F6E56">claude-sonnet-4-6</td><td>$3.00</td><td>$15.00</td></tr>
+        <tr><td style="color:#993C1D">claude-haiku-4-5-20251001</td><td>$0.25</td><td>$1.25</td></tr>
       </tbody>
     </table>
     <p style="margin-top:12px;font-size:13px;color:#666">
-      A typical medium-length story generation (Planner + Critic + Writer) costs roughly
-      $0.04–$0.08 with default model settings. Running v2 + Explainer adds approximately
-      $0.01–$0.03.
+      A typical medium-length generation (FactGen + Planner + Critic + Writer) costs roughly
+      $0.05–$0.10 with default settings. Running v2 + Explainer adds approximately $0.01–$0.03.
     </p>
   </div>
 
-  <!-- Key Design Decisions -->
+  <!-- Design Decisions -->
   <div class="card">
     <h2>Key design decisions</h2>
 
     <div class="decision">
-      <strong>Facts are append-only</strong>
-      <p>Once written, facts cannot be changed or removed. The agent must reconcile new facts with all previous ones — mirroring how real environments work. This is the core constraint that makes the v1 vs v2 comparison meaningful.</p>
+      <strong>Human-in-the-loop is a first-class agent concept</strong>
+      <p>The Fact Generator produces facts, but the human approves them before the pipeline proceeds. This is not just a UX choice — it demonstrates one of the most important agent patterns: knowing when to pause for human judgment rather than running fully autonomously.</p>
     </div>
 
     <div class="decision">
-      <strong>Agents have single responsibilities</strong>
-      <p>Planner never writes prose. Writer never judges feasibility. Critic never generates content. Clean separation makes each agent inspectable, testable, and independently tunable.</p>
+      <strong>World type flows through both Fact Generator and Writer</strong>
+      <p>A single control shapes both what facts are invented and how the story is told. This keeps the two agents coherent — an outlandish fact set paired with plain literary prose would feel wrong, and vice versa.</p>
+    </div>
+
+    <div class="decision">
+      <strong>Facts are append-only</strong>
+      <p>Once approved, facts cannot be removed — only added to. New facts must be reconciled with all previous ones. This mirrors how real environments work and is what makes the v1 vs v2 comparison meaningful.</p>
     </div>
 
     <div class="decision">
@@ -273,24 +173,22 @@ graph TD
     </div>
 
     <div class="decision">
-      <strong>Config and prompts live outside code</strong>
-      <p>Model choice, temperature, story length, and all prompt wording are in files. You can experiment with any of these without recompiling — making iteration fast and the system transparent.</p>
+      <strong>Agents have single responsibilities</strong>
+      <p>Fact Generator never plans. Planner never writes prose. Writer never judges feasibility. Critic never generates content. Clean separation makes each agent inspectable, testable, and independently tunable.</p>
     </div>
 
     <div class="decision">
-      <strong>Cost tracked per agent</strong>
-      <p>Every API call returns token usage. Each agent accumulates its own cost independently — making the tradeoffs between model choices visible and measurable in the UI on every request.</p>
+      <strong>Config and prompts live outside code</strong>
+      <p>Model, temperature, and all prompt wording are in files. Experiment freely without recompiling.</p>
     </div>
   </div>
 
-  <!-- Footer -->
   <div class="footer">
     Story of a Lifetime &nbsp;·&nbsp; Rajiv Narula &nbsp;·&nbsp;
     <a href="https://github.com/bindaas/story-of-lifetime" style="color:#aaa">github.com/bindaas/story-of-lifetime</a>
   </div>
 
 </div>
-
 <script>
   mermaid.initialize({ startOnLoad: true, theme: 'base',
     themeVariables: { fontSize: '13px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }

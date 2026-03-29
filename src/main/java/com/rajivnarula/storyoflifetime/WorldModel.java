@@ -18,6 +18,7 @@ public class WorldModel {
     private final String       startState;
     private final String       endState;
     private final List<String> facts;
+    private final String       worldType;
 
     private static final String FACTS_DIR = "facts";
 
@@ -26,19 +27,22 @@ public class WorldModel {
         this.startState = readFile(FACTS_DIR + "/start.txt");
         this.endState   = readFile(FACTS_DIR + "/end.txt");
         this.facts      = readFacts(FACTS_DIR + "/facts.txt");
+        this.worldType  = "realistic";
     }
 
     /** Direct constructor — values come from the web form */
-    public WorldModel(String startState, String endState, List<String> facts) {
+    public WorldModel(String startState, String endState, List<String> facts, String worldType) {
         this.startState = startState;
         this.endState   = endState;
         this.facts      = facts;
+        this.worldType  = worldType != null ? worldType : "realistic";
     }
 
     public String       getStartState() { return startState; }
     public String       getEndState()   { return endState; }
     public List<String> getFacts()      { return facts; }
     public int          getFactCount()  { return facts.size(); }
+    public String       getWorldType()  { return worldType; }
 
     public void print() {
         System.out.println("Start : " + startState);
