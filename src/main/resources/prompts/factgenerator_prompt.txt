@@ -22,11 +22,18 @@ WORLD TYPE: {{WORLD_TYPE}}
 - fantastical: Our world but with one impossible element baked in — magic, time travel, or the supernatural. Like Harry Potter, Inception, or Back to the Future.
 - outlandish: An entirely different universe with its own rules — anything goes. Like Game of Thrones, Star Trek, or Dune.
 
+FACT COUNT: {{FACT_COUNT}}
+
 INSTRUCTIONS:
-- Generate between 5 and 10 facts depending on how rich the story warrants
+- Generate exactly {{FACT_COUNT}} facts
 - Facts must be chronologically sequenced — earlier facts first
 - Each fact must be on its own line, no numbering, no bullet points
-- Facts should be specific and concrete — names, ages, places, events
+- Keep each fact short and simple — one event, one sentence, plain language
+- Each fact should state a single thing that happened: who did what, when, where
+- Do NOT write compound facts that pack multiple events or consequences into one line
+- Do NOT editorialize or explain why something matters — just state the fact plainly
+- Facts should read like entries in a timeline, not like story beats or dramatic reveals
+- Be specific and concrete — names, ages, places — but keep the sentence itself short
 - The world type must be consistently reflected throughout all facts
 - At contradiction level medium or high, contradictions should be subtle enough that a naive planner might miss them
 - The facts collectively must make a path from start to end state achievable, even if difficult

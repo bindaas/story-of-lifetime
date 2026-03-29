@@ -6,14 +6,14 @@ START STATE:
 END STATE:
 {{END_STATE}}
 
-FACTS (in chronological order, all must be honoured):
+FACTS (in chronological order — honour all of them; if none are provided, plan freely):
 {{FACTS}}
 
 {{FEEDBACK_SECTION}}
 
 INSTRUCTIONS:
 - Produce exactly 5 to 7 milestones that form a plausible path from start to end
-- Every fact must be reflected in at least one milestone
+- Every fact provided must be reflected in at least one milestone
 - Each milestone must be on its own line in this exact format:
   Milestone N: [brief title] — [one sentence explanation]
 - Be logical and concise — this is a plan, not a story

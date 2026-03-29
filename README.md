@@ -8,7 +8,7 @@ A multi-agent AI web application that generates a life story from a fixed start 
 
 [https://story-of-lifetime-ii73f77uuq-uc.a.run.app](https://story-of-lifetime-ii73f77uuq-uc.a.run.app)
 
-**Architecture & design doc:** [/architecture.html](https://story-of-lifetime-ii73f77uuq-uc.a.run.app/architecture.html)
+**Behind the scenes:** [/architecture.html](https://story-of-lifetime-ii73f77uuq-uc.a.run.app/architecture.html) — how it works, design decisions, how it was built
 
 ---
 
@@ -28,6 +28,7 @@ A multi-agent AI web application that generates a life story from a fixed start 
 | 8 | Fact Generator agent — human-in-the-loop | Done |
 | 9 | World type — grounded to outlandish | Done |
 | 10 | UI restructure — three column layout, world type as input, creativity derived from world type, progressive reveal, consistent button colours | Done |
+| 11 | UI polish — collapsible setup cards, button parity, additional facts UX, "Behind the scenes" page reorder with anchor links | Done |
 
 ---
 

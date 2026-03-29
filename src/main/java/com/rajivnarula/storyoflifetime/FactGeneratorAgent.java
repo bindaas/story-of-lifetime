@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -44,9 +45,15 @@ public class FactGeneratorAgent {
 
     public FactGeneratorResult generate(String startState, String endState,
                                         String creativity, String contradiction,
-                                        String worldType) throws Exception {
+                                        String worldType, int factCount) throws Exception {
 
-        String   prompt    = buildPrompt(startState, endState, creativity, contradiction, worldType);
+        // 0 facts is a valid creative choice — skip the API call entirely
+        if (factCount == 0) {
+            System.out.println("[FactGeneratorAgent] factCount=0, returning empty list");
+            return new FactGeneratorResult(Collections.emptyList(), 0, 0, 0.0, 0L);
+        }
+
+        String   prompt    = buildPrompt(startState, endState, creativity, contradiction, worldType, factCount);
         long     startTime = System.currentTimeMillis();
         JsonNode root      = callClaude(prompt);
         long     elapsedMs = System.currentTimeMillis() - startTime;
@@ -83,14 +90,15 @@ public class FactGeneratorAgent {
 
     private String buildPrompt(String startState, String endState,
                                 String creativity, String contradiction,
-                                String worldType) throws IOException {
+                                String worldType, int factCount) throws IOException {
         String template = loadPromptTemplate();
         return template
                 .replace("{{START_STATE}}",   startState)
                 .replace("{{END_STATE}}",     endState)
                 .replace("{{CREATIVITY}}",    creativity)
                 .replace("{{CONTRADICTION}}", contradiction)
-                .replace("{{WORLD_TYPE}}",    worldType);
+                .replace("{{WORLD_TYPE}}",    worldType)
+                .replace("{{FACT_COUNT}}",    String.valueOf(factCount));
     }
 
     private String loadPromptTemplate() throws IOException {

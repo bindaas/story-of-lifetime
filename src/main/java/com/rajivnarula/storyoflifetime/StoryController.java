@@ -29,7 +29,8 @@ public class StoryController {
                     request.getEndState().trim(),
                     request.getCreativity(),
                     request.getContradiction(),
-                    request.getWorldType()
+                    request.getWorldType(),
+                    request.getFactCount()
             );
 
             return ResponseEntity.ok(Map.of(

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Story of a Lifetime — Architecture</title>
+  <title>Story of a Lifetime — Behind the Scenes</title>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,17 +26,25 @@
     }
     .back-link:hover { text-decoration: underline; }
 
+    /* Table of contents */
+    .toc { background: #fff; border: 0.5px solid #ddd; border-radius: 12px; padding: 20px 24px; }
+    .toc h2 { font-size: 13px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+    .toc ol { padding-left: 18px; }
+    .toc li { margin-bottom: 4px; }
+    .toc a { font-size: 13px; color: #534AB7; text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+
     .card { background: #fff; border: 0.5px solid #ddd; border-radius: 12px; padding: 24px 28px; }
     h2 { font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #1a1a1a; }
     p  { font-size: 14px; line-height: 1.75; color: #333; margin-bottom: 10px; }
     p:last-child { margin-bottom: 0; }
 
     /* Agent grid */
-    .agent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .agent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px; }
     .agent-card { border-radius: 8px; padding: 14px 16px; border: 0.5px solid #e8e8e8; }
     .agent-card h3 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
     .agent-card p  { font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 4px; }
-    .agent-card .meta { font-size: 11px; color: #999; margin-top: 6px; }
+    .agent-card .meta { font-size: 11px; color: #999; margin-top: 6px; margin-bottom: 0; }
     .factgen-card   { background: #fffbf5; border-color: #FAC775; }
     .planner-card   { background: #f4f3fe; border-color: #c8c4f0; }
     .critic-card    { background: #fdf1ed; border-color: #f5c4b3; }
@@ -49,7 +57,7 @@
     .explainer-color { color: #185FA5; }
 
     /* Diagram */
-    .diagram-wrap { background: #fafafa; border-radius: 8px; padding: 20px; border: 0.5px solid #eee; overflow-x: auto; }
+    .diagram-wrap { background: #fafafa; border-radius: 8px; padding: 20px; border: 0.5px solid #eee; overflow-x: auto; margin-top: 12px; }
 
     /* Tables */
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -58,6 +66,7 @@
     tr:nth-child(even) td { background: #fafafa; }
     tr:last-child td { border-bottom: none; }
     td:first-child { font-weight: 500; color: #1a1a1a; white-space: nowrap; }
+    code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0f0ec; padding: 1px 5px; border-radius: 4px; }
 
     /* World type grid */
     .world-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-top: 12px; }
@@ -70,10 +79,14 @@
     .decision { border-left: 3px solid #534AB7; padding: 10px 14px; background: #f9f8ff; border-radius: 0 6px 6px 0; margin-bottom: 10px; }
     .decision strong { font-size: 13px; color: #3C3489; display: block; margin-bottom: 4px; }
     .decision p { font-size: 13px; color: #555; margin: 0; line-height: 1.6; }
+    .decision p + p { margin-top: 8px; }
 
     /* Human in the loop */
     .hitl-box { background: #eaf3de; border: 0.5px solid #9fe1cb; border-radius: 8px; padding: 14px 16px; margin-top: 12px; }
     .hitl-box p { font-size: 13px; color: #3b6d11; margin: 0; line-height: 1.6; }
+
+    /* Section anchor offset */
+    .anchor-target { scroll-margin-top: 24px; }
 
     .footer { text-align: center; font-size: 12px; color: #aaa; border-top: 0.5px solid #e8e8e8; padding-top: 20px; }
 
@@ -90,115 +103,44 @@
 
   <div class="header">
     <h1>Story of a Lifetime</h1>
-    <p>Architecture &amp; Design — One Pager</p>
+    <p>Behind the scenes — how it works and how it was built</p>
     <div class="header-meta">
       <a href="https://story-of-lifetime-ii73f77uuq-uc.a.run.app" target="_blank">Live demo ↗</a>
       <a href="https://github.com/bindaas/story-of-lifetime" target="_blank">GitHub ↗</a>
     </div>
   </div>
 
-  <!-- Tech Stack -->
-  <div class="card">
-    <h2>Technology stack</h2>
-    <table>
-      <thead><tr><th>Layer</th><th>Technology</th></tr></thead>
-      <tbody>
-        <tr><td>Backend</td><td>Java 17, Spring Boot 3.2, Maven</td></tr>
-        <tr><td>Frontend</td><td>Single-page HTML/CSS/JS — no framework, no build step</td></tr>
-        <tr><td>LLM API</td><td>Anthropic Claude — configurable model per agent</td></tr>
-        <tr><td>HTTP client</td><td>OkHttp 4.12 (30s connect/write, 120s read timeout)</td></tr>
-        <tr><td>JSON</td><td>Jackson Databind</td></tr>
-        <tr><td>Hosting</td><td>Google Cloud Run — containerised, serverless, auto-scaling</td></tr>
-        <tr><td>Secrets</td><td>Google Secret Manager — API key injected as env variable</td></tr>
-        <tr><td>Container</td><td>Docker, eclipse-temurin:17-jre-focal base image</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- API Endpoints -->
-  <div class="card">
-    <h2>API endpoints</h2>
-    <table>
-      <thead><tr><th>Method</th><th>Path</th><th>What it does</th></tr></thead>
-      <tbody>
-        <tr><td>POST</td><td>/api/generate-facts</td><td>Runs FactGeneratorAgent. Returns fact list for human review.</td></tr>
-        <tr><td>POST</td><td>/api/generate</td><td>Runs Planner → Critic loop → Writer. Returns outline, story, critic decisions, per-agent cost.</td></tr>
-        <tr><td>POST</td><td>/api/explain</td><td>Runs Explainer on v1 vs v2. Returns diff analysis and cost.</td></tr>
-        <tr><td>GET</td><td>/</td><td>Single-page application (index.html)</td></tr>
-        <tr><td>GET</td><td>/architecture.html</td><td>This document</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Cost Model -->
-  <div class="card">
-    <h2>Cost model</h2>
-    <p>Token usage and cost are tracked independently per agent on every request. Pricing as of 2025:</p>
-    <table style="margin-top:12px">
-      <thead><tr><th>Model</th><th>Input per 1M tokens</th><th>Output per 1M tokens</th></tr></thead>
-      <tbody>
-        <tr><td style="color:#534AB7">claude-opus-4-6</td><td>$15.00</td><td>$75.00</td></tr>
-        <tr><td style="color:#0F6E56">claude-sonnet-4-6</td><td>$3.00</td><td>$15.00</td></tr>
-        <tr><td style="color:#993C1D">claude-haiku-4-5-20251001</td><td>$0.25</td><td>$1.25</td></tr>
-      </tbody>
-    </table>
-    <p style="margin-top:12px;font-size:13px;color:#666">
-      A typical medium-length generation (FactGen + Planner + Critic + Writer) costs roughly
-      $0.05–$0.10 with default settings. Running v2 + Explainer adds approximately $0.01–$0.03.
-    </p>
-  </div>
-
-  <!-- Design Decisions -->
-  <div class="card">
-    <h2>Key design decisions</h2>
-
-    <div class="decision">
-      <strong>Human-in-the-loop is a first-class agent concept</strong>
-      <p>The Fact Generator produces facts, but the human approves them before the pipeline proceeds. This is not just a UX choice — it demonstrates one of the most important agent patterns: knowing when to pause for human judgment rather than running fully autonomously.</p>
-    </div>
-
-    <div class="decision">
-      <strong>World type flows through both Fact Generator and Writer</strong>
-      <p>A single control shapes both what facts are invented and how the story is told. This keeps the two agents coherent — an outlandish fact set paired with plain literary prose would feel wrong, and vice versa.</p>
-    </div>
-
-    <div class="decision">
-      <strong>Facts are append-only</strong>
-      <p>Once approved, facts cannot be removed — only added to. New facts must be reconciled with all previous ones. This mirrors how real environments work and is what makes the v1 vs v2 comparison meaningful.</p>
-    </div>
-
-    <div class="decision">
-      <strong>The Critic loop is what makes it agentic</strong>
-      <p>A pipeline executes in sequence. An agent evaluates and decides its next step. The Critic's reject-and-replan cycle — with the rejection reason fed back into the Planner — is what crosses that line.</p>
-    </div>
-
-    <div class="decision">
-      <strong>Agents have single responsibilities</strong>
-      <p>Fact Generator never plans. Planner never writes prose. Writer never judges feasibility. Critic never generates content. Clean separation makes each agent inspectable, testable, and independently tunable.</p>
-    </div>
-
-    <div class="decision">
-      <strong>Config and prompts live outside code</strong>
-      <p>Model, temperature, and all prompt wording are in files. Experiment freely without recompiling.</p>
-    </div>
+  <!-- Table of contents -->
+  <div class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#how-it-was-built">How this was built</a></li>
+      <li><a href="#agent-pipeline">Agent pipeline</a></li>
+      <li><a href="#design-decisions">Key design decisions</a></li>
+      <li><a href="#agents">The five agents</a></li>
+      <li><a href="#world-types">World types</a></li>
+      <li><a href="#gcp-deployment">Google Cloud deployment</a></li>
+      <li><a href="#api-endpoints">API endpoints</a></li>
+      <li><a href="#cost-model">Cost model</a></li>
+      <li><a href="#tech-stack">Technology stack</a></li>
+    </ol>
   </div>
 
   <!-- How this was built -->
-  <div class="card">
+  <div class="card anchor-target" id="how-it-was-built">
     <h2>How this was built</h2>
 
     <p>
-      This application was built in a single extended conversation with Claude (Anthropic) —
-      starting from a question about whether the story generation idea was even a good fit
-      for an agent demo, and ending with a live multi-agent system deployed on Google Cloud Run.
+      This application was built through an extended collaboration with Claude — first via Claude.ai
+      on desktop, then through Claude Code CLI as the tooling matured. The project began with a
+      question about whether the story generation idea was even a good fit for an agent demo, and
+      grew into a live multi-agent system deployed on Google Cloud Run.
     </p>
 
-    <p>
-      The honest split of roles:
-    </p>
+    <p>The honest split of roles:</p>
 
     <div class="decision">
-      <strong>Rajiv — product thinking, architecture decisions, UX design, and judgment</strong>
+      <strong>Rajiv — product thinking, architecture decisions, UX design, testing, and judgment</strong>
       <p>
         Every meaningful decision in this project came from the human side. Whether this was a good
         agent use case. The three-agent separation of concerns. Using a dedicated API key per project.
@@ -207,13 +149,21 @@
         Asking why. Knowing when to stop adding features. These are not small things — they are the
         project. The code is just the expression of those decisions.
       </p>
-      <p style="margin-top:8px">
+      <p>
         The user experience was shaped entirely from the human side too — the three-column layout,
         hiding the facts textarea until the agent populates it, moving world type from an informational
         panel into an active input, removing the creativity slider when it became redundant with world
-        type, the progressive reveal of agent controls after approval, the dark About card as an
-        elevator pitch, the punchy tagline. Every one of these was observed, questioned, and decided
-        during the conversation — not generated.
+        type, the progressive reveal of agent controls after approval, collapsing setup cards once
+        facts are generated to keep the interface clean, the dark About card as an elevator pitch,
+        the punchy tagline. Every one of these was observed, questioned, and decided during the
+        conversation — not generated.
+      </p>
+      <p>
+        Testing was also entirely human-driven. Every agent interaction was manually exercised across
+        world types, contradiction levels, and story lengths. Edge cases — the Critic rejecting all
+        three attempts, empty fact lists, very long generations — were caught and resolved through
+        hands-on use, not automated tests. The feedback loop between running the app and directing
+        the next change is where most of the product quality came from.
       </p>
     </div>
 
@@ -252,6 +202,223 @@
         in seconds. The collaboration worked because both sides stayed in their lane.
       </p>
     </div>
+  </div>
+
+  <!-- Agent pipeline -->
+  <div class="card anchor-target" id="agent-pipeline">
+    <h2>Agent pipeline</h2>
+    <p>Five agents working in sequence, with a human checkpoint after fact generation and a Critic feedback loop before writing:</p>
+    <div class="diagram-wrap">
+      <div class="mermaid" style="font-size:12px">
+graph TD
+    A([Beginning + Ending]) --> B[Fact Generator]
+    B --> C([You review &amp; approve facts])
+    C --> D[Planner]
+    D --> E[Critic]
+    E -->|rejected| D
+    E -->|approved| F[Writer]
+    F --> G([Original story])
+    G -.->|add more facts| D2[Planner]
+    D2 --> E2[Critic]
+    E2 -->|approved| F2[Writer]
+    F2 --> H([Revised story])
+    H -.-> I[Explainer]
+
+    style A fill:#fff,stroke:#ddd,color:#1a1a1a
+    style B fill:#FAEEDA,stroke:#854F0B,color:#633806
+    style C fill:#eaf3de,stroke:#3b6d11,color:#27500A
+    style D fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+    style E fill:#FAECE7,stroke:#993C1D,color:#712B13
+    style F fill:#E1F5EE,stroke:#0F6E56,color:#085041
+    style G fill:#f1efe8,stroke:#888780,color:#444441
+    style D2 fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+    style E2 fill:#FAECE7,stroke:#993C1D,color:#712B13
+    style F2 fill:#E1F5EE,stroke:#0F6E56,color:#085041
+    style H fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+    style I fill:#E6F1FB,stroke:#185FA5,color:#0C447C
+      </div>
+    </div>
+
+    <div class="hitl-box">
+      <p><strong>Human-in-the-loop:</strong> The pipeline pauses after the Fact Generator. The human can edit, reorder, add, or regenerate facts freely. Only after explicit approval does Planner → Critic → Writer proceed. This is a deliberate architectural choice, not a UX afterthought.</p>
+    </div>
+  </div>
+
+  <!-- Key design decisions -->
+  <div class="card anchor-target" id="design-decisions">
+    <h2>Key design decisions</h2>
+
+    <div class="decision">
+      <strong>Human-in-the-loop is a first-class agent concept</strong>
+      <p>The Fact Generator produces facts, but the human approves them before the pipeline proceeds. This is not just a UX choice — it demonstrates one of the most important agent patterns: knowing when to pause for human judgment rather than running fully autonomously.</p>
+    </div>
+
+    <div class="decision">
+      <strong>World type flows through both Fact Generator and Writer</strong>
+      <p>A single control shapes both what facts are invented and how the story is told. This keeps the two agents coherent — an outlandish fact set paired with plain literary prose would feel wrong, and vice versa.</p>
+    </div>
+
+    <div class="decision">
+      <strong>Facts are append-only after approval</strong>
+      <p>Once approved, facts become the baseline and cannot be removed — only added to. New facts must be reconciled with all previous ones. This mirrors how real environments work and is what makes the original vs revised comparison meaningful.</p>
+    </div>
+
+    <div class="decision">
+      <strong>The Critic loop is what makes it agentic</strong>
+      <p>A pipeline executes in sequence. An agent evaluates and decides its next step. The Critic's reject-and-replan cycle — with the rejection reason fed back into the Planner — is what crosses that line.</p>
+    </div>
+
+    <div class="decision">
+      <strong>Agents have single responsibilities</strong>
+      <p>Fact Generator never plans. Planner never writes prose. Writer never judges feasibility. Critic never generates content. Clean separation makes each agent inspectable, testable, and independently tunable.</p>
+    </div>
+
+    <div class="decision">
+      <strong>Config and prompts live outside code</strong>
+      <p>Model, temperature, and all prompt wording are in files — not hardcoded. Experiment freely without recompiling.</p>
+    </div>
+
+    <div class="decision">
+      <strong>Creativity is derived, not user-controlled</strong>
+      <p>Rather than exposing a separate creativity slider, creativity is derived automatically from the world type the user already picked. Fewer controls, more coherent output — grounded → low creativity, outlandish → high creativity.</p>
+    </div>
+  </div>
+
+  <!-- The five agents -->
+  <div class="card anchor-target" id="agents">
+    <h2>The five agents</h2>
+    <div class="agent-grid">
+      <div class="agent-card factgen-card">
+        <h3 class="factgen-color">Fact Generator</h3>
+        <p>Invents life facts shaped by contradiction level, world type, and a requested fact count. Creativity is derived automatically from world type. Output is reviewed and optionally edited by a human before the pipeline proceeds.</p>
+        <p class="meta">claude-sonnet-4-6 · temp 0.9 · prompt: factgenerator_prompt.txt</p>
+      </div>
+      <div class="agent-card planner-card">
+        <h3 class="planner-color">Planner</h3>
+        <p>Reads the world model (start, end, facts) and produces a structured 5–7 milestone outline. On retry attempts, the Critic's rejection reason is injected so the Planner knows exactly what to fix.</p>
+        <p class="meta">claude-sonnet-4-6 · temp 0.3 · prompt: planner_prompt.txt</p>
+      </div>
+      <div class="agent-card critic-card">
+        <h3 class="critic-color">Critic</h3>
+        <p>Evaluates the Planner's outline for timeline plausibility, fact consistency, and logical gaps. Returns APPROVED or REJECTED with a specific reason. Max 3 attempts before falling back to the last outline.</p>
+        <p class="meta">claude-sonnet-4-6 · temp 0.1 · prompt: critic_prompt.txt</p>
+      </div>
+      <div class="agent-card writer-card">
+        <h3 class="writer-color">Writer</h3>
+        <p>Takes the approved outline and generates full prose. Writing style is shaped by world type — plain literary fiction for grounded, epic narrative for outlandish. Used for both the original and revised story.</p>
+        <p class="meta">claude-opus-4-6 · temp 0.8 · prompt: writer_prompt.txt</p>
+      </div>
+      <div class="agent-card explainer-card" style="grid-column: 1 / -1">
+        <h3 class="explainer-color">Explainer</h3>
+        <p>Runs automatically after the revised story is generated. Compares both stories side by side, identifies what changed, and explains exactly which new facts caused each divergence. Cost and time tracked independently from the main pipeline.</p>
+        <p class="meta">claude-sonnet-4-6 · temp 0.3 · prompt: explainer_prompt.txt</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- World types -->
+  <div class="card anchor-target" id="world-types">
+    <h2>World types</h2>
+    <p>A single control that flows through both the Fact Generator and the Writer, keeping the invented facts and the prose style coherent with each other:</p>
+    <div class="world-grid">
+      <div class="world-card">
+        <h4>Grounded</h4>
+        <p>Real world, real rules. No heightened elements.</p>
+        <div class="eg">Schindler's List, The Pursuit of Happyness</div>
+      </div>
+      <div class="world-card">
+        <h4>Realistic</h4>
+        <p>Heightened but believable. Extraordinary within reality.</p>
+        <div class="eg">Forrest Gump, Slumdog Millionaire</div>
+      </div>
+      <div class="world-card">
+        <h4>Fantastical</h4>
+        <p>One impossible element in an otherwise real world.</p>
+        <div class="eg">Harry Potter, Inception</div>
+      </div>
+      <div class="world-card">
+        <h4>Outlandish</h4>
+        <p>A completely different universe with its own rules.</p>
+        <div class="eg">Game of Thrones, Star Trek, Dune</div>
+      </div>
+    </div>
+    <p style="margin-top:14px;font-size:13px;color:#666">
+      Creativity level (low / medium / high) is derived automatically from the world type — it is passed to the Fact Generator but is not a user-facing control.
+    </p>
+  </div>
+
+  <!-- Google Cloud Deployment -->
+  <div class="card anchor-target" id="gcp-deployment">
+    <h2>Google Cloud deployment</h2>
+    <p>The application runs on Google Cloud Run — containerised, serverless, and auto-scaling to zero when idle. A single deploy script handles everything from build to live.</p>
+    <table style="margin-top:12px">
+      <thead><tr><th>Component</th><th>Details</th></tr></thead>
+      <tbody>
+        <tr><td>Platform</td><td>Google Cloud Run — us-central1 region</td></tr>
+        <tr><td>Container</td><td>Docker, <code>eclipse-temurin:17-jre-focal</code> base image</td></tr>
+        <tr><td>Registry</td><td>Google Container Registry (<code>gcr.io</code>)</td></tr>
+        <tr><td>API key</td><td>Google Secret Manager — secret named <code>ANTHROPIC_API_KEY</code>, injected as <code>STORY_OF_LIFETIME_ANTHROPIC_API_KEY</code></td></tr>
+        <tr><td>Deploy</td><td><code>./deploy.sh</code> — one-command build and deploy</td></tr>
+        <tr><td>Read timeout</td><td>120 seconds — accommodates Claude's longest generation times</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:14px;font-size:13px;color:#666">
+      Cloud Run scales to zero when idle and spins up within seconds on first request. The 120-second OkHttp read timeout is deliberate — Claude can take 60–90 seconds for long story generations and Cloud Run must not recycle the container mid-request.
+    </p>
+    <p style="margin-top:10px;font-size:13px;color:#666">
+      One-time IAM setup grants the default compute service account access to the Secret Manager secret. After that, every <code>./deploy.sh</code> run rebuilds the image, pushes it, and deploys the new revision in a single command.
+    </p>
+  </div>
+
+  <!-- API Endpoints -->
+  <div class="card anchor-target" id="api-endpoints">
+    <h2>API endpoints</h2>
+    <table>
+      <thead><tr><th>Method</th><th>Path</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>POST</td><td>/api/generate-facts</td><td>Runs FactGeneratorAgent. Returns fact list for human review.</td></tr>
+        <tr><td>POST</td><td>/api/generate</td><td>Runs Planner → Critic loop → Writer. Returns outline, story, critic decisions, per-agent cost.</td></tr>
+        <tr><td>POST</td><td>/api/explain</td><td>Runs Explainer on original vs revised. Returns diff analysis and cost.</td></tr>
+        <tr><td>GET</td><td>/</td><td>Single-page application (index.html)</td></tr>
+        <tr><td>GET</td><td>/architecture.html</td><td>This document</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Cost Model -->
+  <div class="card anchor-target" id="cost-model">
+    <h2>Cost model</h2>
+    <p>Token usage and cost are tracked independently per agent on every request. Pricing as of 2025:</p>
+    <table style="margin-top:12px">
+      <thead><tr><th>Model</th><th>Input per 1M tokens</th><th>Output per 1M tokens</th></tr></thead>
+      <tbody>
+        <tr><td style="color:#534AB7">claude-opus-4-6</td><td>$15.00</td><td>$75.00</td></tr>
+        <tr><td style="color:#0F6E56">claude-sonnet-4-6</td><td>$3.00</td><td>$15.00</td></tr>
+        <tr><td style="color:#993C1D">claude-haiku-4-5-20251001</td><td>$0.25</td><td>$1.25</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:12px;font-size:13px;color:#666">
+      A typical medium-length generation (FactGen + Planner + Critic + Writer) costs roughly
+      $0.05–$0.10 with default settings. Running the revised story + Explainer adds approximately $0.01–$0.03.
+    </p>
+  </div>
+
+  <!-- Tech Stack -->
+  <div class="card anchor-target" id="tech-stack">
+    <h2>Technology stack</h2>
+    <table>
+      <thead><tr><th>Layer</th><th>Technology</th></tr></thead>
+      <tbody>
+        <tr><td>Backend</td><td>Java 17, Spring Boot 3.2, Maven</td></tr>
+        <tr><td>Frontend</td><td>Single-page HTML/CSS/JS — no framework, no build step</td></tr>
+        <tr><td>LLM API</td><td>Anthropic Claude — configurable model per agent</td></tr>
+        <tr><td>HTTP client</td><td>OkHttp 4.12 (30s connect/write, 120s read timeout)</td></tr>
+        <tr><td>JSON</td><td>Jackson Databind</td></tr>
+        <tr><td>Hosting</td><td>Google Cloud Run — containerised, serverless, auto-scaling</td></tr>
+        <tr><td>Secrets</td><td>Google Secret Manager — API key injected as env variable</td></tr>
+        <tr><td>Container</td><td>Docker, eclipse-temurin:17-jre-focal base image</td></tr>
+      </tbody>
+    </table>
   </div>
 
   <div class="footer">

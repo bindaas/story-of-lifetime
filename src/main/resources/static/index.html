@@ -180,8 +180,8 @@
     .stories-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .story-column { display: flex; flex-direction: column; gap: 10px; }
     .story-version-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; padding: 4px 12px; border-radius: 20px; display: inline-block; align-self: flex-start; }
-    .v1-label { background: #eaf3de; color: #3b6d11; }
-    .v2-label { background: #EEEDFE; color: #534AB7; }
+    .v1-label { background: #f1efe8; color: #444441; border: 0.5px solid #a8a8a0; }
+    .v2-label { background: #EEEDFE; color: #534AB7; border: 0.5px solid #c8c4f0; }
     .story-fact-count { font-size: 11px; color: #aaa; margin-top: 2px; }
 
     .divider { height: 0.5px; background: #e8e8e8; margin: 16px 0; }
@@ -190,6 +190,17 @@
 
     .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Collapsible cards */
+    .collapsible-header {
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; user-select: none;
+    }
+    .collapsible-header:hover { opacity: 0.85; }
+    .collapsible-header .section-label,
+    .collapsible-header .agent-label { margin-bottom: 0; }
+    .collapsible-body { margin-top: 14px; }
+    .chevron { font-size: 11px; color: #bbb; }
 
     @media (max-width: 900px) {
       .agent-cards    { grid-template-columns: 1fr; }
@@ -214,7 +225,7 @@
     </div>
     <a href="/architecture.html" target="_blank"
        style="font-size:12px;color:#534AB7;text-decoration:none;white-space:nowrap;margin-top:4px">
-      Architecture ↗
+      Behind the scenes ↗
     </a>
   </div>
 
@@ -297,69 +308,93 @@
 
       <!-- Story setup -->
       <div class="card">
-        <div class="section-label">Story setup</div>
-        <div class="input-group" style="margin-bottom:12px">
-          <label>Beginning</label>
-          <textarea id="startState" rows="2">John was born in an orphanage in Texas in 1975.</textarea>
+        <div class="collapsible-header" onclick="toggleSection('storySetupBody', 'storySetupChevron')">
+          <div class="section-label">Story setup</div>
+          <span class="chevron" id="storySetupChevron">▲</span>
         </div>
-        <div class="input-group">
-          <label>Ending</label>
-          <textarea id="endState" rows="2">John was confirmed as Health Minister for the new government in India.</textarea>
+        <div id="storySetupBody" class="collapsible-body">
+          <div class="input-group" style="margin-bottom:12px">
+            <label>Beginning</label>
+            <textarea id="startState" rows="2">John was born in an orphanage in Texas in 1975.</textarea>
+          </div>
+          <div class="input-group">
+            <label>Ending</label>
+            <textarea id="endState" rows="2">John was confirmed as Health Minister for the new government in India.</textarea>
+          </div>
         </div>
       </div>
 
       <!-- Fact Generator -->
       <div class="factgen-card">
-        <div class="agent-label factgen-label">Fact generator agent</div>
-        <div style="margin-bottom:12px">
-          <div class="control-group" style="margin-bottom:0">
-            <label>Contradiction</label>
-            <div class="radio-group" id="contradictionGroup">
-              <div class="pill" data-value="low">Low</div>
-              <div class="pill active" data-value="medium">Medium</div>
-              <div class="pill" data-value="high">High</div>
+        <div class="collapsible-header" onclick="toggleSection('factGenBody', 'factGenChevron')">
+          <div class="agent-label factgen-label">Fact generator agent</div>
+          <span class="chevron" id="factGenChevron">▲</span>
+        </div>
+        <div id="factGenBody" class="collapsible-body">
+          <div style="margin-bottom:12px">
+            <div class="control-group" style="margin-bottom:0">
+              <label>Contradiction</label>
+              <div class="radio-group" id="contradictionGroup">
+                <div class="pill" data-value="low">Low</div>
+                <div class="pill active" data-value="medium">Medium</div>
+                <div class="pill" data-value="high">High</div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="control-group" style="margin-bottom:12px">
-          <label>World type</label>
-          <div class="world-grid" id="worldTypeGroup">
-            <div class="world-card" data-value="grounded" onclick="selectWorldType(this)">
-              <h4>Grounded</h4>
-              <p>Real world, real rules.</p>
-              <div class="eg">Schindler's List</div>
-            </div>
-            <div class="world-card active-world" data-value="realistic" onclick="selectWorldType(this)">
-              <h4>Realistic</h4>
-              <p>Heightened but believable.</p>
-              <div class="eg">Forrest Gump</div>
-            </div>
-            <div class="world-card" data-value="fantastical" onclick="selectWorldType(this)">
-              <h4>Fantastical</h4>
-              <p>One impossible element.</p>
-              <div class="eg">Harry Potter</div>
-            </div>
-            <div class="world-card" data-value="outlandish" onclick="selectWorldType(this)">
-              <h4>Outlandish</h4>
-              <p>Different universe entirely.</p>
-              <div class="eg">Game of Thrones</div>
+          <div class="control-group" style="margin-bottom:12px">
+            <label>World type</label>
+            <div class="world-grid" id="worldTypeGroup">
+              <div class="world-card" data-value="grounded" onclick="selectWorldType(this)">
+                <h4>Grounded</h4>
+                <p>Real world, real rules.</p>
+                <div class="eg">Schindler's List</div>
+              </div>
+              <div class="world-card active-world" data-value="realistic" onclick="selectWorldType(this)">
+                <h4>Realistic</h4>
+                <p>Heightened but believable.</p>
+                <div class="eg">Forrest Gump</div>
+              </div>
+              <div class="world-card" data-value="fantastical" onclick="selectWorldType(this)">
+                <h4>Fantastical</h4>
+                <p>One impossible element.</p>
+                <div class="eg">Harry Potter</div>
+              </div>
+              <div class="world-card" data-value="outlandish" onclick="selectWorldType(this)">
+                <h4>Outlandish</h4>
+                <p>Different universe entirely.</p>
+                <div class="eg">Game of Thrones</div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <button class="btn btn-primary" id="generateFactsBtn" onclick="generateFacts()" style="width:100%">Generate facts</button>
+          <div class="control-group" style="margin-bottom:12px">
+            <label>Number of facts — <span id="factCountLabel">5</span></label>
+            <div class="slider-wrap">
+              <span style="font-size:11px;color:#aaa">0</span>
+              <input type="range" id="factCountSlider" min="0" max="10" value="5" step="1" style="accent-color:#854F0B">
+              <span style="font-size:11px;color:#aaa">10</span>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" id="generateFactsBtn" onclick="generateFacts()" style="width:100%">Generate facts</button>
+        </div>
       </div>
 
       <!-- Facts review -->
       <div class="card" id="factsCard" style="display:none;background:#eaf3de;border-color:#9fe1cb">
-        <div class="facts-header">
-          <label for="facts" style="color:#3b6d11;font-weight:600">You review &amp; approve facts</label>
-          <span class="approved-badge" id="approvedBadge">Approved</span>
+        <div class="collapsible-header" onclick="toggleSection('factsBody', 'factsChevron')">
+          <div style="display:flex;align-items:center;gap:10px">
+            <label for="facts" style="color:#3b6d11;font-weight:600;cursor:pointer">You review &amp; approve facts</label>
+            <span class="approved-badge" id="approvedBadge">Approved</span>
+          </div>
+          <span class="chevron" id="factsChevron" style="color:#3b6d11">▲</span>
         </div>
-        <textarea id="facts" rows="8" placeholder="Click 'Generate facts' above to populate this field, or type your own facts — one per line."></textarea>
-        <div style="display:flex;justify-content:flex-end;margin-top:10px">
-          <button class="btn btn-primary" id="approveFactsBtn" onclick="approveFacts()" style="display:none">Approve facts →</button>
+        <div id="factsBody" class="collapsible-body">
+          <textarea id="facts" rows="8" placeholder="Click 'Generate facts' above to populate this field, or type your own facts — one per line."></textarea>
+          <div style="margin-top:10px">
+            <button class="btn btn-primary" id="approveFactsBtn" onclick="approveFacts()" style="width:100%;display:none">Approve facts →</button>
+          </div>
         </div>
       </div>
 
@@ -438,7 +473,7 @@
           </div>
           <div style="display:flex;gap:10px">
             <button class="btn btn-primary" id="generateBtn" onclick="generateV1()" style="flex:1">Generate original story</button>
-            <button class="btn btn-secondary" id="saveV1Btn" onclick="saveV1()" style="display:none">Add new facts →</button>
+            <button class="btn btn-primary" id="saveV1Btn" onclick="saveV1()" style="display:none">Add new facts →</button>
           </div>
         </div>
 
@@ -447,14 +482,12 @@
       <!-- Additional Facts (revised story) -->
       <div class="additional-facts-panel" id="additionalFactsPanel" style="display:none">
         <div class="section-label">Additional facts — revised story</div>
-        <p class="additional-facts-note">Add new facts below — appended to original facts, never replacing them.</p>
+        <p class="additional-facts-note">These facts build on the original baseline. The original story stays exactly as written — a revised story will be generated alongside it.</p>
         <div class="input-group" style="margin-bottom:12px">
-          <label>Additional facts <span style="color:#9b93e8;font-weight:400">— one per line</span></label>
-          <textarea id="additionalFacts" rows="4">John's uncle goes bankrupt when John is 8 and can no longer support him
-A civil war breaks out in Texas forcing John to flee north
-John wins a full international golf scholarship to study abroad</textarea>
+          <label>Additional facts</label>
+          <textarea id="additionalFacts" rows="4" placeholder="One fact per line..."></textarea>
         </div>
-        <button class="btn btn-primary" id="generateV2Btn" onclick="generateV2()" style="width:100%">Generate revised story</button>
+        <button class="btn btn-primary" id="generateV2Btn" onclick="generateV2()" style="width:100%" disabled>Generate revised story</button>
       </div>
 
     </div>
@@ -498,12 +531,13 @@ graph TD
 
   <!-- Output -->
   <div class="card" id="outputCard" style="display:none">
-    <div class="section-label" id="outputLabel">Output</div>
+    <div class="section-label" id="outputLabel">Your story</div>
 
     <div id="maxAttemptsWarning" style="display:none;background:#faece7;border:0.5px solid #F0997B;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#712B13;">
       <strong>Max attempts reached.</strong> The Critic rejected all 3 outlines. The story was written from the <strong>last attempt</strong> — it may contain unresolved contradictions.
     </div>
 
+    <div class="section-label" id="costSectionLabel" style="display:none;margin-bottom:10px">Model usage and cost</div>
     <div id="costSection" style="display:none">
       <table class="cost-table">
         <thead><tr><th>Agent</th><th>Model</th><th>Input</th><th>Output</th><th>Cost</th><th>Time</th></tr></thead>
@@ -538,16 +572,21 @@ graph TD
     <div id="outlineSection" style="display:none">
       <div class="agent-label planner-label" style="margin-bottom:10px">Approved outline</div>
       <div class="outline-box" id="outlineBox"></div>
-      <div class="agent-label writer-label" style="margin-bottom:10px">Generated story</div>
     </div>
 
-    <div id="storyOutput" class="placeholder">Your story will appear here after you click Generate v1.</div>
+    <div id="writerSection" style="display:none">
+      <div class="agent-label writer-label" style="margin-bottom:10px">Story</div>
+    </div>
+
+    <div id="storyOutput" class="placeholder">Your story will appear here after you click Generate original story.</div>
 
     <div id="explainerSection" style="display:none">
       <div class="divider"></div>
-      <div class="agent-label" style="color:#185FA5;margin-bottom:10px">Explainer — what changed and why</div>
-      <div id="explainerMeta" style="font-size:12px;color:#888;margin-bottom:12px"></div>
-      <div id="explainerText" style="font-size:14px;line-height:1.85;color:#2a2a2a"></div>
+      <div style="background:#e8f2fc;border:0.5px solid #b5d4f4;border-radius:8px;padding:16px 18px">
+        <div class="agent-label" style="color:#185FA5;margin-bottom:10px">Explainer — what changed and why</div>
+        <div id="explainerMeta" style="font-size:12px;color:#4a7daa;margin-bottom:12px"></div>
+        <div id="explainerText" style="font-size:14px;line-height:1.85;color:#0C447C"></div>
+      </div>
     </div>
   </div>
 
@@ -560,6 +599,19 @@ graph TD
 
   let v1Data = null, v1Meta = null, factsApproved = false;
   let selectedLength = 'medium', selectedContradiction = 'medium', selectedWorldType = 'realistic';
+
+  function toggleSection(bodyId, chevronId) {
+    const body    = document.getElementById(bodyId);
+    const chevron = document.getElementById(chevronId);
+    const isHidden = body.style.display === 'none';
+    body.style.display = isHidden ? '' : 'none';
+    chevron.textContent = isHidden ? '▲' : '▼';
+  }
+
+  function collapseSection(bodyId, chevronId) {
+    document.getElementById(bodyId).style.display = 'none';
+    document.getElementById(chevronId).textContent = '▼';
+  }
 
   function creativityFromWorldType(worldType) {
     return { grounded: 'low', realistic: 'medium', fantastical: 'high', outlandish: 'high' }[worldType] || 'medium';
@@ -596,6 +648,14 @@ graph TD
   bindSlider('criticTemp',  'criticTempLabel');
   bindSlider('writerTemp',  'writerTempLabel');
 
+  document.getElementById('factCountSlider').addEventListener('input', function() {
+    document.getElementById('factCountLabel').textContent = this.value;
+  });
+
+  document.getElementById('additionalFacts').addEventListener('input', function() {
+    document.getElementById('generateV2Btn').disabled = this.value.trim().length === 0;
+  });
+
   async function generateFacts() {
     const startState = document.getElementById('startState').value.trim();
     const endState   = document.getElementById('endState').value.trim();
@@ -612,7 +672,8 @@ graph TD
       const res  = await fetch('/api/generate-facts', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ startState, endState, creativity: creativityFromWorldType(selectedWorldType),
-          contradiction: selectedContradiction, worldType: selectedWorldType })
+          contradiction: selectedContradiction, worldType: selectedWorldType,
+          factCount: parseInt(document.getElementById('factCountSlider').value) })
       });
       const data = await res.json();
       if (data.error) {
@@ -622,6 +683,11 @@ graph TD
         document.getElementById('facts').placeholder = '';
         document.getElementById('factsCard').style.display = 'block';
         document.getElementById('approveFactsBtn').style.display = 'inline-block';
+        collapseSection('storySetupBody', 'storySetupChevron');
+        collapseSection('factGenBody', 'factGenChevron');
+        // ensure facts body is expanded
+        document.getElementById('factsBody').style.display = '';
+        document.getElementById('factsChevron').textContent = '▲';
       }
     } catch (e) {
       document.getElementById('facts').placeholder = 'Network error: ' + e.message;
@@ -629,11 +695,10 @@ graph TD
   }
 
   function approveFacts() {
-    const facts = document.getElementById('facts').value.trim();
-    if (!facts) { alert('No facts to approve.'); return; }
     factsApproved = true;
     document.getElementById('approvedBadge').style.display   = 'inline-block';
     document.getElementById('approveFactsBtn').style.display = 'none';
+    collapseSection('factsBody', 'factsChevron');
     document.getElementById('agentSection').style.display    = 'flex';
     document.getElementById('agentSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -657,13 +722,13 @@ graph TD
     if (!factsApproved) { alert('Please approve the facts first.'); return; }
     const cfg = getConfig();
     const facts = document.getElementById('facts').value.trim();
-    if (!cfg.startState || !cfg.endState || !facts) return;
+    if (!cfg.startState || !cfg.endState) return;
     v1Data = null;
     document.getElementById('saveV1Btn').style.display            = 'none';
     document.getElementById('generateBtn').textContent             = 'Generate original story';
     document.getElementById('additionalFactsPanel').style.display = 'none';
     document.getElementById('outputCard').style.display           = 'block';
-    document.getElementById('outputLabel').textContent            = 'Output';
+    document.getElementById('outputLabel').textContent            = 'Your story';
     setLoading('generateBtn', 'Generating original story...');
     hideOutputSections();
     setPlaceholder('Running Planner → Critic → Writer — this may take 60–90 seconds...');
@@ -706,6 +771,9 @@ graph TD
       criticLogHtml:   document.getElementById('criticLog').innerHTML,
       outlineText:     document.getElementById('outlineBox').textContent
     };
+    document.getElementById('additionalFacts').value              = '';
+    document.getElementById('generateV2Btn').disabled              = true;
+    document.getElementById('generateBtn').disabled                = true;
     document.getElementById('additionalFactsPanel').style.display = 'block';
     document.getElementById('saveV1Btn').style.display             = 'none';
     document.getElementById('additionalFactsPanel').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -722,7 +790,7 @@ graph TD
     setLoading('generateV2Btn', 'Generating revised story...');
     hideOutputSections();
     document.getElementById('explainerSection').style.display = 'none';
-    document.getElementById('outputLabel').textContent = 'Output — original vs revised';
+    document.getElementById('outputLabel').textContent = 'Original and revised';
     setPlaceholder('Running Planner → Critic → Writer with expanded facts...');
     const data = await callGenerate({ ...cfg, facts: allFacts });
     releaseButton('generateV2Btn', 'Generate revised story');
@@ -732,10 +800,10 @@ graph TD
     const v2StoryText = data.story;
     document.getElementById('storyOutput').innerHTML =
       '<div class="stories-grid">' +
-        '<div class="story-column"><span class="story-version-label v1-label">v1</span>' +
+        '<div class="story-column"><span class="story-version-label v1-label">Original</span>' +
         '<div class="story-fact-count">' + v1Data.factCount + ' facts</div>' +
         '<div class="story-text">' + v1Data.story + '</div></div>' +
-        '<div class="story-column"><span class="story-version-label v2-label">v2</span>' +
+        '<div class="story-column"><span class="story-version-label v2-label">Revised</span>' +
         '<div class="story-fact-count">' + v2FactCount + ' facts</div>' +
         '<div class="story-text">' + storyHtml(v2StoryText) + '</div></div>' +
       '</div>';
@@ -790,6 +858,7 @@ graph TD
     document.getElementById('cWriterTime').textContent    = (data.writerElapsedMs/1000).toFixed(1)+'s';
     document.getElementById('cTotalCost').textContent     = formatCost(data.totalCostUsd);
     document.getElementById('cTotalTime').textContent     = (data.totalElapsedMs/1000).toFixed(1)+'s';
+    document.getElementById('costSectionLabel').style.display = 'block';
     document.getElementById('costSection').style.display  = 'block';
     document.getElementById('maxAttemptsWarning').style.display = data.plannerAccepted ? 'none' : 'block';
     const log = document.getElementById('criticLog');
@@ -807,6 +876,7 @@ graph TD
 
   function renderCostAndCriticSideBySide(v2) {
     document.getElementById('maxAttemptsWarning').style.display = v2.plannerAccepted ? 'none' : 'block';
+    document.getElementById('costSectionLabel').style.display = 'block';
     document.getElementById('costSection').style.display = 'block';
     document.getElementById('costSection').innerHTML =
       '<div class="stories-grid" style="margin-bottom:16px">' +
@@ -855,6 +925,7 @@ graph TD
   function renderOutline(data) {
     document.getElementById('outlineBox').textContent = data.outline;
     document.getElementById('outlineSection').style.display = 'block';
+    document.getElementById('writerSection').style.display = 'block';
   }
 
   function renderOutlineSideBySide(v2) {
@@ -864,8 +935,8 @@ graph TD
       '<div class="stories-grid">' +
         '<div><div class="story-version-label v1-label" style="margin-bottom:10px">Original</div><div class="outline-box">' + escapeHtml(v1Meta.outlineText) + '</div></div>' +
         '<div><div class="story-version-label v2-label" style="margin-bottom:10px">Revised</div><div class="outline-box">' + escapeHtml(v2.outline) + '</div></div>' +
-      '</div>' +
-      '<div class="agent-label writer-label" style="margin-bottom:10px;margin-top:16px">Generated story</div>';
+      '</div>';
+    document.getElementById('writerSection').style.display = 'block';
   }
 
   function storyHtml(story) {
@@ -874,7 +945,7 @@ graph TD
   }
 
   function hideOutputSections() {
-    ['costSection','criticSection','outlineSection'].forEach(id => document.getElementById(id).style.display = 'none');
+    ['costSectionLabel','costSection','criticSection','outlineSection','writerSection'].forEach(id => document.getElementById(id).style.display = 'none');
   }
   function setPlaceholder(msg) { document.getElementById('storyOutput').innerHTML = '<span class="placeholder">' + escapeHtml(msg) + '</span>'; }
   function setError(msg) { document.getElementById('storyOutput').innerHTML = '<span class="error-text">Error: ' + escapeHtml(msg) + '</span>'; }

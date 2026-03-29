@@ -6,7 +6,7 @@ START STATE:
 END STATE:
 {{END_STATE}}
 
-FACTS (in chronological order, all must be honoured):
+FACTS (in chronological order — weave all into the narrative; if none are provided, write freely from the outline):
 {{FACTS}}
 
 OUTLINE TO FOLLOW:
@@ -22,7 +22,7 @@ INSTRUCTIONS:
 - Write the story in prose, in third person
 - The story must begin with the start state and end with the end state
 - Follow the outline milestones in order
-- Every fact must appear naturally woven into the narrative
+- Weave any provided facts naturally into the narrative
 - The world type must shape the prose style, vocabulary, and tone throughout
 - Length: {{STORY_LENGTH}}
 - Do not number the paragraphs

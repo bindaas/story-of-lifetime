@@ -10,6 +10,7 @@ public class FactGenerateRequest {
     private String creativity;
     private String contradiction;
     private String worldType;     // grounded | realistic | fantastical | outlandish
+    private int    factCount = 5; // number of facts to generate (0–10)
 
     public String getStartState()              { return startState; }
     public void   setStartState(String v)      { this.startState = v; }
@@ -21,4 +22,6 @@ public class FactGenerateRequest {
     public void   setContradiction(String v)   { this.contradiction = v; }
     public String getWorldType()               { return worldType; }
     public void   setWorldType(String v)       { this.worldType = v; }
+    public int    getFactCount()               { return factCount; }
+    public void   setFactCount(int v)          { this.factCount = v; }
 }
