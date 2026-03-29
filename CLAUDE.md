@@ -151,8 +151,8 @@ All agents use these timeouts — do not reduce them:
 ## Behind the scenes page (architecture.html)
 - Filename stays `architecture.html` for URL stability; display title is "Behind the scenes"
 - Link in index.html reads "Behind the scenes ↗"
-- Section order: How this was built → Design decisions → Agent pipeline → Agents → World types → API endpoints → Cost model → Tech stack
-- Each section has an `id` attribute for deep linking (e.g. `#how-it-was-built`, `#design-decisions`, `#agent-pipeline`, `#agents`, `#world-types`, `#api-endpoints`, `#cost-model`, `#tech-stack`)
+- Section order: How this was built → Agent pipeline → Design decisions → Agents → World types → Google Cloud deployment → Git workflow → Testing → API endpoints → Cost model → Tech stack
+- Each section has an `id` attribute for deep linking (e.g. `#how-it-was-built`, `#design-decisions`, `#agent-pipeline`, `#agents`, `#world-types`, `#gcp-deployment`, `#git-workflow`, `#testing`, `#api-endpoints`, `#cost-model`, `#tech-stack`)
 - Table of contents at the top links to all sections
 
 ## Creativity is derived from world type

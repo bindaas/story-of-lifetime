@@ -120,6 +120,8 @@
       <li><a href="#agents">The five agents</a></li>
       <li><a href="#world-types">World types</a></li>
       <li><a href="#gcp-deployment">Google Cloud deployment</a></li>
+      <li><a href="#git-workflow">Git workflow</a></li>
+      <li><a href="#testing">Testing</a></li>
       <li><a href="#api-endpoints">API endpoints</a></li>
       <li><a href="#cost-model">Cost model</a></li>
       <li><a href="#tech-stack">Technology stack</a></li>
@@ -368,6 +370,47 @@ graph TD
     <p style="margin-top:10px;font-size:13px;color:#666">
       One-time IAM setup grants the default compute service account access to the Secret Manager secret. After that, every <code>./deploy.sh</code> run rebuilds the image, pushes it, and deploys the new revision in a single command.
     </p>
+  </div>
+
+  <!-- Git Workflow -->
+  <div class="card anchor-target" id="git-workflow">
+    <h2>Git workflow</h2>
+    <p>Every change follows a feature branch → PR → review → merge cycle. No commits go directly to <code>main</code>.</p>
+    <table style="margin-top:12px">
+      <thead><tr><th>Step</th><th>Who</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td>1. Branch</td><td>Claude</td><td>Creates a <code>feature/&lt;name&gt;</code> branch for the task</td></tr>
+        <tr><td>2. Implement</td><td>Claude</td><td>Makes all changes on the branch, commits with co-authorship line</td></tr>
+        <tr><td>3. PR</td><td>Claude</td><td>Opens a pull request via <code>gh pr create</code> with summary and test plan</td></tr>
+        <tr><td>4. Review</td><td>Rajiv</td><td>Checks out the branch, runs the app or tests, and reviews the diff</td></tr>
+        <tr><td>5. Merge</td><td>Claude</td><td>Merges once approved via <code>gh pr merge</code></td></tr>
+        <tr><td>6. Cleanup</td><td>Claude</td><td>Checks out main, pulls, deletes the local branch</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:14px;font-size:13px;color:#666">
+      GitHub is configured to auto-delete the remote branch on merge. Commits include a
+      <code>Co-Authored-By: Claude Sonnet 4.6</code> trailer to attribute AI contribution in the git log.
+      The <code>gh</code> CLI is authenticated and used for all GitHub operations — PR creation, merge, and status checks.
+    </p>
+  </div>
+
+  <!-- Testing -->
+  <div class="card anchor-target" id="testing">
+    <h2>Testing</h2>
+    <p>The project has two complementary layers of testing — automated unit tests covering the Java layer, and manual end-to-end testing through the live UI.</p>
+
+    <div class="decision">
+      <strong>Unit tests — 40 tests across 7 classes</strong>
+      <p>JUnit 5 via <code>spring-boot-starter-test</code>. All tests run without an API key — they test only local logic, not live Claude calls. The <code>factCount=0</code> short-circuit in <code>FactGeneratorAgent</code> makes it possible to exercise the agent class itself without any network call.</p>
+      <p>Coverage: <code>AppConfig</code> defaults and story length parsing · <code>WorldModel</code> constructor and getters · <code>CriticResult</code> APPROVED/REJECTED decision logic · <code>FactGenerateRequest</code> field defaults and setters · all five agent result classes · every prompt template file (exists + all required placeholders present) · <code>FactGeneratorAgent</code> zero-count short-circuit.</p>
+    </div>
+
+    <div class="decision">
+      <strong>Manual end-to-end testing</strong>
+      <p>Every agent interaction is exercised against the live Claude API across world types, contradiction levels, and story lengths. Edge cases — the Critic rejecting all three attempts, empty fact lists, very long generations, the 0-fact path — are caught through hands-on use. The feedback loop between running the app and directing the next change is where most of the product quality came from.</p>
+    </div>
+
+    <p style="font-size:13px;color:#666;margin-top:4px">Run unit tests locally with <code>mvn test</code>. No API key required.</p>
   </div>
 
   <!-- API Endpoints -->
