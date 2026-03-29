@@ -27,6 +27,7 @@ A multi-agent AI web application that generates a life story from a fixed start 
 | 7 | Explainer agent — diff and explainability | Done |
 | 8 | Fact Generator agent — human-in-the-loop | Done |
 | 9 | World type — grounded to outlandish | Done |
+| 10 | UI restructure — three column layout, world type as input, creativity derived from world type, progressive reveal, consistent button colours | Done |
 
 ---
 

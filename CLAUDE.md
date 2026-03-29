@@ -134,3 +134,25 @@ All agents use these timeouts — do not reduce them:
 **Change model or temperature:** edit `src/main/resources/system.properties`.
 
 **Add a new world type:** add to the UI pills in `index.html`, add description to `factgenerator_prompt.txt` and `writer_prompt.txt`.
+
+## UI conventions
+- All action buttons use `btn-primary` (black) — Generate facts, Approve facts, Generate original story, Generate revised story
+- Active pills (contradiction level) use amber `#854F0B` to match the Fact Generator card theme
+- World type selector lives in the middle column inside the Fact Generator card — it is an active input, not informational
+- Left column is purely informational — How it works prose, agent descriptions, no interactive controls
+- Facts textarea (`factsCard`) is hidden on load, revealed only after Generate facts runs successfully, hidden again if regenerated
+- Agent section (Planner/Critic/Writer cards + Generate button) is hidden until facts are approved
+
+## Creativity is derived from world type
+Creativity is no longer a user-facing control. It is derived automatically from world type in JS:
+- grounded → low
+- realistic → medium
+- fantastical → high
+- outlandish → high
+
+The `creativityFromWorldType(worldType)` function in index.html handles this. The `/api/generate-facts` endpoint still accepts a `creativity` parameter — it is just now set automatically rather than by the user.
+
+## Terminology
+- "v1" is called "original story" in the UI
+- "v2" is called "revised story" in the UI
+- Internal JS variables still use v1Data, v2StoryText etc. — only user-facing labels changed
