@@ -183,6 +183,77 @@
     </div>
   </div>
 
+  <!-- How this was built -->
+  <div class="card">
+    <h2>How this was built</h2>
+
+    <p>
+      This application was built in a single extended conversation with Claude (Anthropic) —
+      starting from a question about whether the story generation idea was even a good fit
+      for an agent demo, and ending with a live multi-agent system deployed on Google Cloud Run.
+    </p>
+
+    <p>
+      The honest split of roles:
+    </p>
+
+    <div class="decision">
+      <strong>Rajiv — product thinking, architecture decisions, UX design, and judgment</strong>
+      <p>
+        Every meaningful decision in this project came from the human side. Whether this was a good
+        agent use case. The three-agent separation of concerns. Using a dedicated API key per project.
+        Keeping prompts outside code. The human-in-the-loop checkpoint. The world type concept and
+        its four definitions. The original vs revised story framing. Pushing back when something felt wrong.
+        Asking why. Knowing when to stop adding features. These are not small things — they are the
+        project. The code is just the expression of those decisions.
+      </p>
+      <p style="margin-top:8px">
+        The user experience was shaped entirely from the human side too — the three-column layout,
+        hiding the facts textarea until the agent populates it, moving world type from an informational
+        panel into an active input, removing the creativity slider when it became redundant with world
+        type, the progressive reveal of agent controls after approval, the dark About card as an
+        elevator pitch, the punchy tagline. Every one of these was observed, questioned, and decided
+        during the conversation — not generated.
+      </p>
+    </div>
+
+    <div class="decision">
+      <strong>Claude — code generation, implementation, and technical boilerplate</strong>
+      <p>
+        Claude wrote all the Java, HTML, CSS, and JavaScript. It set up the Spring Boot structure,
+        wired the agents together, handled the OkHttp calls, built the Mermaid diagram, generated
+        the Dockerfile and deployment scripts, and kept the growing codebase consistent across
+        dozens of iterations. It also pushed back where it had a view — on prompt design,
+        agent temperature choices, and what "genuinely agentic" means versus a dressed-up prompt chain.
+      </p>
+    </div>
+
+    <div class="decision">
+      <strong>Is this "vibe coding"?</strong>
+      <p>
+        Partially — but not entirely. Vibe coding in its purest form is "describe what you want,
+        accept what you get, don't worry about understanding it." That's not what happened here.
+        The architectural decisions were deliberate and reasoned. The human understood what each
+        agent was doing and why. When something broke, the cause was diagnosed — not just retried.
+        The better description is <em>AI-assisted development with genuine human judgment driving
+        the architecture</em>. The speed at which a working multi-agent system went from idea to
+        production is very much the vibe coding energy. The depth of the decisions behind it is not.
+      </p>
+    </div>
+
+    <div class="decision">
+      <strong>What this demonstrates about building with AI</strong>
+      <p>
+        The parts Claude could not contribute: knowing what problem to solve, deciding what made
+        a demo compelling, choosing when the Critic loop was the right thing to show an audience,
+        recognising that "append-only facts" needed rethinking when the Fact Generator arrived.
+        The parts a human could not contribute at this speed: the Spring Boot wiring, the OkHttp
+        timeout configuration, the Mermaid diagram syntax, the CSS grid layout, all of it produced
+        in seconds. The collaboration worked because both sides stayed in their lane.
+      </p>
+    </div>
+  </div>
+
   <div class="footer">
     Story of a Lifetime &nbsp;·&nbsp; Rajiv Narula &nbsp;·&nbsp;
     <a href="https://github.com/bindaas/story-of-lifetime" style="color:#aaa">github.com/bindaas/story-of-lifetime</a>

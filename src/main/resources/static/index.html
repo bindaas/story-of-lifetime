@@ -57,7 +57,7 @@
       font-size: 12px; cursor: pointer; background: #fafafa; color: #555;
       user-select: none; transition: background 0.1s, color 0.1s;
     }
-    .pill.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+    .pill.active { background: #854F0B; color: #fff; border-color: #854F0B; }
 
     /* Overview + diagram two-column */
     .overview-grid {
@@ -210,7 +210,7 @@
   <div style="display:flex;justify-content:space-between;align-items:flex-start">
     <div>
       <h1 style="font-size:20px;font-weight:600">Story of a Lifetime</h1>
-      <p style="font-size:13px;color:#888;margin-top:4px">Generate a life story from a start state to an end state, guided by AI-generated facts</p>
+      <p style="font-size:13px;color:#888;margin-top:4px">Give a story its beginning and ending. Five agents take it from there — each watching the others' work.</p>
     </div>
     <a href="/architecture.html" target="_blank"
        style="font-size:12px;color:#534AB7;text-decoration:none;white-space:nowrap;margin-top:4px">
@@ -240,18 +240,19 @@
     <div class="card overview-left">
       <div class="section-label">How it works</div>
       <p style="font-size:13px;line-height:1.7;color:#444;margin-bottom:4px">
-        Provide a <strong>start state</strong> and <strong>end state</strong>. The
+        Start by giving your story a beginning and an ending. The
         <strong>Fact Generator</strong> creates life facts shaped by your settings —
-        you control creativity, contradiction level, and world type.
-        Edit, reorder, or regenerate freely before approving. Once approved, those facts
-        become the baseline. To generate v2, you add more facts on top — the original
-        approved facts stay fixed.
+        you control contradiction level and world type — creativity is derived automatically from the world type.
+        <strong>You</strong> edit, reorder, or regenerate freely before approving. Once approved,
+        those facts become the baseline for the original story.
       </p>
       <p style="font-size:13px;line-height:1.7;color:#444;margin-bottom:0">
-        The <strong>Critic</strong> can reject the Planner's outline and force a replan —
-        this feedback loop is what makes the system genuinely agentic rather than a simple
-        prompt chain. Add more facts to generate another version of the story (v2) — the
-        <strong>Explainer</strong> will show exactly where and why the story diverged.
+        The <strong>Planner</strong> builds a story outline. The <strong>Critic</strong> evaluates it
+        and can reject it — forcing a replan until the logic holds. The <strong>Writer</strong> then
+        turns the approved outline into full prose. This feedback loop is what makes the system
+        genuinely agentic rather than a simple prompt chain. To generate a revised story, add more
+        facts on top of the approved baseline — the <strong>Explainer</strong> will then show
+        exactly where and why the story diverged.
       </p>
 
       <div class="inner-divider">Agents</div>
@@ -259,7 +260,7 @@
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
         <div style="border-radius:8px;padding:12px 14px;background:#fffbf5;border:0.5px solid #FAC775">
           <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:#854F0B;margin-bottom:4px">Fact Generator</div>
-          <p style="font-size:12px;color:#633806;line-height:1.5;margin-bottom:4px">Generates life facts shaped by creativity level (low/medium/high), contradiction level (low/medium/high), and world type. Output is reviewed and optionally edited by a human before proceeding.</p>
+          <p style="font-size:12px;color:#633806;line-height:1.5;margin-bottom:4px">Generates life facts shaped by contradiction level (low/medium/high) and world type (grounded/realistic/fantastical/outlandish). Creativity is derived automatically from the world type. Output is reviewed and optionally edited by a human before proceeding.</p>
           <div style="font-size:10px;color:#BA7517">Default: claude-sonnet-4-6 · temp 0.9</div>
         </div>
         <div style="border-radius:8px;padding:12px 14px;background:#f4f3fe;border:0.5px solid #c8c4f0">
@@ -284,34 +285,10 @@
         </div>
       </div>
 
-      <div style="background:#eaf3de;border:0.5px solid #9fe1cb;border-radius:8px;padding:10px 12px;margin-bottom:14px">
+      <div style="background:#eaf3de;border:0.5px solid #9fe1cb;border-radius:8px;padding:10px 12px">
         <p style="font-size:11px;color:#3b6d11;margin:0;line-height:1.6">
           <strong>Human-in-the-loop:</strong> After the Fact Generator runs, the human reviews the facts — they can edit, add, or regenerate. Only after explicit approval does the Planner→Critic→Writer pipeline proceed.
         </p>
-      </div>
-
-      <div class="inner-divider">World types</div>
-      <div class="world-grid" id="worldTypeGroup">
-        <div class="world-card" data-value="grounded" onclick="selectWorldType(this)">
-          <h4>Grounded</h4>
-          <p>Real world, real rules. Things that could actually happen to a real person.</p>
-          <div class="eg">Schindler's List, Pursuit of Happyness</div>
-        </div>
-        <div class="world-card active-world" data-value="realistic" onclick="selectWorldType(this)">
-          <h4>Realistic</h4>
-          <p>Real world but heightened. Dramatic coincidences, larger-than-life characters, still no magic.</p>
-          <div class="eg">Forrest Gump, Slumdog Millionaire</div>
-        </div>
-        <div class="world-card" data-value="fantastical" onclick="selectWorldType(this)">
-          <h4>Fantastical</h4>
-          <p>Our world with one impossible element baked in — magic, time travel, supernatural.</p>
-          <div class="eg">Harry Potter, Inception, Back to the Future</div>
-        </div>
-        <div class="world-card" data-value="outlandish" onclick="selectWorldType(this)">
-          <h4>Outlandish</h4>
-          <p>Entirely different universe with its own rules — anything goes.</p>
-          <div class="eg">Game of Thrones, Star Trek, Dune</div>
-        </div>
       </div>
     </div>
 
@@ -322,11 +299,11 @@
       <div class="card">
         <div class="section-label">Story setup</div>
         <div class="input-group" style="margin-bottom:12px">
-          <label>Start state</label>
+          <label>Beginning</label>
           <textarea id="startState" rows="2">John was born in an orphanage in Texas in 1975.</textarea>
         </div>
         <div class="input-group">
-          <label>End state</label>
+          <label>Ending</label>
           <textarea id="endState" rows="2">John was confirmed as Health Minister for the new government in India.</textarea>
         </div>
       </div>
@@ -334,15 +311,7 @@
       <!-- Fact Generator -->
       <div class="factgen-card">
         <div class="agent-label factgen-label">Fact generator agent</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-          <div class="control-group" style="margin-bottom:0">
-            <label>Creativity</label>
-            <div class="radio-group" id="creativityGroup">
-              <div class="pill" data-value="low">Low</div>
-              <div class="pill active" data-value="medium">Medium</div>
-              <div class="pill" data-value="high">High</div>
-            </div>
-          </div>
+        <div style="margin-bottom:12px">
           <div class="control-group" style="margin-bottom:0">
             <label>Contradiction</label>
             <div class="radio-group" id="contradictionGroup">
@@ -352,18 +321,45 @@
             </div>
           </div>
         </div>
-        <button class="btn btn-amber" id="generateFactsBtn" onclick="generateFacts()" style="width:100%">Generate facts</button>
+
+        <div class="control-group" style="margin-bottom:12px">
+          <label>World type</label>
+          <div class="world-grid" id="worldTypeGroup">
+            <div class="world-card" data-value="grounded" onclick="selectWorldType(this)">
+              <h4>Grounded</h4>
+              <p>Real world, real rules.</p>
+              <div class="eg">Schindler's List</div>
+            </div>
+            <div class="world-card active-world" data-value="realistic" onclick="selectWorldType(this)">
+              <h4>Realistic</h4>
+              <p>Heightened but believable.</p>
+              <div class="eg">Forrest Gump</div>
+            </div>
+            <div class="world-card" data-value="fantastical" onclick="selectWorldType(this)">
+              <h4>Fantastical</h4>
+              <p>One impossible element.</p>
+              <div class="eg">Harry Potter</div>
+            </div>
+            <div class="world-card" data-value="outlandish" onclick="selectWorldType(this)">
+              <h4>Outlandish</h4>
+              <p>Different universe entirely.</p>
+              <div class="eg">Game of Thrones</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="generateFactsBtn" onclick="generateFacts()" style="width:100%">Generate facts</button>
       </div>
 
       <!-- Facts review -->
-      <div class="card">
+      <div class="card" id="factsCard" style="display:none">
         <div class="facts-header">
           <label for="facts">Facts <span style="color:#bbb;font-weight:400">— review, edit, then approve</span></label>
           <span class="approved-badge" id="approvedBadge">Approved</span>
         </div>
         <textarea id="facts" rows="8" placeholder="Click 'Generate facts' above to populate this field, or type your own facts — one per line."></textarea>
         <div style="display:flex;justify-content:flex-end;margin-top:10px">
-          <button class="btn btn-green" id="approveFactsBtn" onclick="approveFacts()" style="display:none">Approve facts →</button>
+          <button class="btn btn-primary" id="approveFactsBtn" onclick="approveFacts()" style="display:none">Approve facts →</button>
         </div>
       </div>
 
@@ -441,16 +437,16 @@
             </div>
           </div>
           <div style="display:flex;gap:10px">
-            <button class="btn btn-primary" id="generateBtn" onclick="generateV1()" style="flex:1">Generate v1</button>
-            <button class="btn btn-secondary" id="saveV1Btn" onclick="saveV1()" style="display:none">Save as v1</button>
+            <button class="btn btn-primary" id="generateBtn" onclick="generateV1()" style="flex:1">Generate original story</button>
+            <button class="btn btn-secondary" id="saveV1Btn" onclick="saveV1()" style="display:none">Save original story</button>
           </div>
         </div>
 
       </div>
 
-      <!-- Additional Facts (v2) -->
+      <!-- Additional Facts (revised story) -->
       <div class="additional-facts-panel" id="additionalFactsPanel" style="display:none">
-        <div class="section-label">Additional facts — v2</div>
+        <div class="section-label">Additional facts — revised story</div>
         <p class="additional-facts-note">Add new facts below — appended to original facts, never replacing them.</p>
         <div class="input-group" style="margin-bottom:12px">
           <label>Additional facts <span style="color:#9b93e8;font-weight:400">— one per line</span></label>
@@ -458,7 +454,7 @@
 A civil war breaks out in Texas forcing John to flee north
 John wins a full international golf scholarship to study abroad</textarea>
         </div>
-        <button class="btn btn-v2" id="generateV2Btn" onclick="generateV2()" style="width:100%">Generate v2</button>
+        <button class="btn btn-primary" id="generateV2Btn" onclick="generateV2()" style="width:100%">Generate revised story</button>
       </div>
 
     </div>
@@ -475,11 +471,11 @@ graph TD
     D --> E[Critic]
     E -->|rejected| D
     E -->|approved| F[Writer]
-    F --> G([Story v1])
-    G -.->|add more facts| D2[Planner v2]
-    D2 --> E2[Critic v2]
-    E2 -->|approved| F2[Writer v2]
-    F2 --> H([Story v2])
+    F --> G([Original story])
+    G -.->|add more facts| D2[Planner]
+    D2 --> E2[Critic]
+    E2 -->|approved| F2[Writer]
+    F2 --> H([Revised story])
     H -.-> I[Explainer]
 
     style A fill:#f1efe8,stroke:#888780,color:#444441
@@ -563,13 +559,14 @@ graph TD
   });
 
   let v1Data = null, v1Meta = null, factsApproved = false;
-  let selectedLength = 'medium', selectedCreativity = 'medium';
-  let selectedContradiction = 'medium', selectedWorldType = 'realistic';
+  let selectedLength = 'medium', selectedContradiction = 'medium', selectedWorldType = 'realistic';
+
+  function creativityFromWorldType(worldType) {
+    return { grounded: 'low', realistic: 'medium', fantastical: 'high', outlandish: 'high' }[worldType] || 'medium';
+  }
 
   function selectWorldType(el) {
-    document.querySelectorAll('.world-card').forEach(p => {
-      p.classList.remove('active-world');
-    });
+    document.querySelectorAll('.world-card').forEach(p => p.classList.remove('active-world'));
     el.classList.add('active-world');
     selectedWorldType = el.dataset.value;
   }
@@ -583,7 +580,6 @@ graph TD
       });
     });
   }
-  bindPills('creativityGroup',    v => selectedCreativity    = v);
   bindPills('contradictionGroup', v => selectedContradiction = v);
   bindPills('lengthGroup',        v => selectedLength        = v);
 
@@ -603,6 +599,7 @@ graph TD
     factsApproved = false;
     document.getElementById('approvedBadge').style.display   = 'none';
     document.getElementById('approveFactsBtn').style.display = 'none';
+    document.getElementById('factsCard').style.display       = 'none';
     document.getElementById('agentSection').style.display    = 'none';
     setLoading('generateFactsBtn', 'Generating...');
     document.getElementById('facts').value = '';
@@ -610,7 +607,7 @@ graph TD
     try {
       const res  = await fetch('/api/generate-facts', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ startState, endState, creativity: selectedCreativity,
+        body: JSON.stringify({ startState, endState, creativity: creativityFromWorldType(selectedWorldType),
           contradiction: selectedContradiction, worldType: selectedWorldType })
       });
       const data = await res.json();
@@ -619,6 +616,7 @@ graph TD
       } else {
         document.getElementById('facts').value = data.facts.join('\n');
         document.getElementById('facts').placeholder = '';
+        document.getElementById('factsCard').style.display = 'block';
         document.getElementById('approveFactsBtn').style.display = 'inline-block';
       }
     } catch (e) {
@@ -661,11 +659,11 @@ graph TD
     document.getElementById('additionalFactsPanel').style.display = 'none';
     document.getElementById('outputCard').style.display           = 'block';
     document.getElementById('outputLabel').textContent            = 'Output';
-    setLoading('generateBtn', 'Generating v1...');
+    setLoading('generateBtn', 'Generating original story...');
     hideOutputSections();
     setPlaceholder('Running Planner → Critic → Writer — this may take 60–90 seconds...');
     const data = await callGenerate({ ...cfg, facts });
-    releaseButton('generateBtn', 'Generate v1');
+    releaseButton('generateBtn', 'Generate original story');
     if (data.error) { setError(data.error); return; }
     renderCostAndCritic(data);
     renderOutline(data);
@@ -715,13 +713,13 @@ graph TD
     if (!additionalFacts) { document.getElementById('additionalFacts').focus(); return; }
     const allFacts    = originalFacts + '\n' + additionalFacts;
     const v2FactCount = allFacts.trim().split('\n').filter(l => l.trim().length > 0).length;
-    setLoading('generateV2Btn', 'Generating v2...');
+    setLoading('generateV2Btn', 'Generating revised story...');
     hideOutputSections();
     document.getElementById('explainerSection').style.display = 'none';
-    document.getElementById('outputLabel').textContent = 'Output — v1 vs v2';
+    document.getElementById('outputLabel').textContent = 'Output — original vs revised';
     setPlaceholder('Running Planner → Critic → Writer with expanded facts...');
     const data = await callGenerate({ ...cfg, facts: allFacts });
-    releaseButton('generateV2Btn', 'Generate v2');
+    releaseButton('generateV2Btn', 'Generate revised story');
     if (data.error) { setError(data.error); return; }
     renderCostAndCriticSideBySide(data);
     renderOutlineSideBySide(data);
@@ -752,7 +750,7 @@ graph TD
     const text    = document.getElementById('explainerText');
     const meta    = document.getElementById('explainerMeta');
     section.style.display = 'block';
-    text.innerHTML = '<span class="placeholder">Analysing what changed between v1 and v2...</span>';
+    text.innerHTML = '<span class="placeholder">Analysing what changed between the original and revised story...</span>';
     meta.textContent = '';
     try {
       const res  = await fetch('/api/explain', { method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -806,7 +804,7 @@ graph TD
     document.getElementById('costSection').style.display = 'block';
     document.getElementById('costSection').innerHTML =
       '<div class="stories-grid" style="margin-bottom:16px">' +
-        costTableHtml('v1', v1Meta) + costTableHtml('v2', {
+        costTableHtml('Original', v1Meta) + costTableHtml('Revised', {
           plannerAttempts: v2.plannerAttempts > 1 ? '(' + v2.plannerAttempts + ' attempts)' : '',
           plannerModel: v2.plannerModel, plannerInput: v2.plannerInputTokens.toLocaleString(),
           plannerOutput: v2.plannerOutputTokens.toLocaleString(), plannerCost: formatCost(v2.plannerCostUsd),
@@ -823,13 +821,13 @@ graph TD
     document.getElementById('criticSection').innerHTML =
       '<div class="agent-label critic-label" style="margin-bottom:10px">Critic decisions</div>' +
       '<div class="stories-grid">' +
-        '<div><div class="story-version-label v1-label" style="margin-bottom:10px">v1</div><div class="critic-log">' + v1Meta.criticLogHtml + '</div></div>' +
-        '<div><div class="story-version-label v2-label" style="margin-bottom:10px">v2</div><div class="critic-log">' + criticLogHtml(v2.criticDecisions, v2.criticReasons) + '</div></div>' +
+        '<div><div class="story-version-label v1-label" style="margin-bottom:10px">Original</div><div class="critic-log">' + v1Meta.criticLogHtml + '</div></div>' +
+        '<div><div class="story-version-label v2-label" style="margin-bottom:10px">Revised</div><div class="critic-log">' + criticLogHtml(v2.criticDecisions, v2.criticReasons) + '</div></div>' +
       '</div><div class="divider"></div>';
   }
 
   function costTableHtml(version, m) {
-    const lc = version === 'v1' ? 'v1-label' : 'v2-label';
+    const lc = version === 'Original' ? 'v1-label' : 'v2-label';
     return '<div><span class="story-version-label ' + lc + '" style="margin-bottom:10px;display:inline-block">' + version + '</span>' +
       '<table class="cost-table"><thead><tr><th>Agent</th><th>Model</th><th>In</th><th>Out</th><th>Cost</th><th>Time</th></tr></thead><tbody>' +
       '<tr class="planner-row"><td>Planner <span style="font-size:11px;color:#888">' + m.plannerAttempts + '</span></td><td>' + m.plannerModel + '</td><td>' + m.plannerInput + '</td><td>' + m.plannerOutput + '</td><td>' + m.plannerCost + '</td><td>' + m.plannerTime + '</td></tr>' +
@@ -858,8 +856,8 @@ graph TD
     document.getElementById('outlineSection').innerHTML =
       '<div class="agent-label planner-label" style="margin-bottom:10px">Approved outline</div>' +
       '<div class="stories-grid">' +
-        '<div><div class="story-version-label v1-label" style="margin-bottom:10px">v1</div><div class="outline-box">' + escapeHtml(v1Meta.outlineText) + '</div></div>' +
-        '<div><div class="story-version-label v2-label" style="margin-bottom:10px">v2</div><div class="outline-box">' + escapeHtml(v2.outline) + '</div></div>' +
+        '<div><div class="story-version-label v1-label" style="margin-bottom:10px">Original</div><div class="outline-box">' + escapeHtml(v1Meta.outlineText) + '</div></div>' +
+        '<div><div class="story-version-label v2-label" style="margin-bottom:10px">Revised</div><div class="outline-box">' + escapeHtml(v2.outline) + '</div></div>' +
       '</div>' +
       '<div class="agent-label writer-label" style="margin-bottom:10px;margin-top:16px">Generated story</div>';
   }
