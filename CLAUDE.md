@@ -17,12 +17,25 @@ mvn spring-boot:run      # run locally on http://localhost:8080
 
 ## Key directories
 ```
-src/main/java/com/rajivnarula/storyoflifetime/   ← all Java source files
-src/main/resources/prompts/                       ← LLM prompt templates (txt files)
-src/main/resources/static/                        ← frontend (index.html, architecture.html aka "Behind the scenes")
-src/main/resources/system.properties             ← model, temperature, story length defaults
-facts/                                            ← start.txt, end.txt, facts.txt (CLI mode)
+src/main/java/com/rajivnarula/storyoflifetime/
+  config/     ← AppConfig.java
+  model/      ← WorldModel, request/response classes
+  agent/      ← BaseAgent + 5 agent classes
+  result/     ← AgentResult base + 5 result classes
+  web/        ← StoryController.java
+  Main.java
+src/main/resources/prompts/          ← LLM prompt templates (txt files)
+src/main/resources/static/           ← frontend (index.html, architecture.html aka "Behind the scenes")
+src/main/resources/system.properties ← model, temperature, story length defaults
+facts/                                ← start.txt, end.txt, facts.txt (CLI mode)
 ```
+
+## Package conventions
+- `config` — AppConfig only
+- `model` — WorldModel, all request classes (FactGenerateRequest, StoryRequest, ExplainRequest), StoryResponse
+- `agent` — BaseAgent (shared HTTP/prompt/cost logic) + 5 agent classes extending it
+- `result` — AgentResult (shared token/cost/elapsed fields) + 5 result classes extending it
+- `web` — StoryController only
 
 ## Environment variables
 ```
@@ -46,13 +59,23 @@ PlannerAgent → CriticAgent → (replan if rejected, max 3 attempts)
 ```
 
 ## Agent classes and their files
+All agents extend `agent.BaseAgent`. All results extend `result.AgentResult`.
+
 | Class | Prompt file | Result class |
 |-------|------------|--------------|
-| FactGeneratorAgent.java | prompts/factgenerator_prompt.txt | FactGeneratorResult.java |
-| PlannerAgent.java | prompts/planner_prompt.txt | PlannerResult.java |
-| CriticAgent.java  | prompts/critic_prompt.txt  | CriticResult.java  |
-| WriterAgent.java  | prompts/writer_prompt.txt  | WriterResult.java  |
-| ExplainerAgent.java | prompts/explainer_prompt.txt | ExplainerResult.java |
+| agent/FactGeneratorAgent.java | prompts/factgenerator_prompt.txt | result/FactGeneratorResult.java |
+| agent/PlannerAgent.java | prompts/planner_prompt.txt | result/PlannerResult.java |
+| agent/CriticAgent.java  | prompts/critic_prompt.txt  | result/CriticResult.java  |
+| agent/WriterAgent.java  | prompts/writer_prompt.txt  | result/WriterResult.java  |
+| agent/ExplainerAgent.java | prompts/explainer_prompt.txt | result/ExplainerResult.java |
+
+## BaseAgent (agent/BaseAgent.java)
+Shared infrastructure for all agents:
+- `OkHttpClient` (30/30/120s timeouts) — built once, shared via inheritance
+- `loadPromptTemplate(String promptFile)` — loads from classpath
+- `callClaude(String model, double temperature, int maxTokens, String prompt)` — single-turn API call
+- `calculateCost(String model, int in, int out)` — opus/haiku/sonnet pricing
+- `formatFacts(List<String> facts)` — numbered list formatter for prompt injection
 
 ## API endpoints
 ```

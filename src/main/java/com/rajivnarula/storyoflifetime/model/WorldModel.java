@@ -1,4 +1,4 @@
-package com.rajivnarula.storyoflifetime;
+package com.rajivnarula.storyoflifetime.model;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * WorldModel is the single source of truth passed into every agent.
+ * Single source of truth passed into every agent.
  * Supports two construction modes:
  *   - File-based: reads from the facts/ directory (CLI mode)
  *   - Direct:     accepts values from the web form (web mode)

@@ -29,6 +29,8 @@ A multi-agent AI web application that generates a life story from a fixed start 
 | 9 | World type — grounded to outlandish | Done |
 | 10 | UI restructure — three column layout, world type as input, creativity derived from world type, progressive reveal, consistent button colours | Done |
 | 11 | UI polish — collapsible setup cards, button parity, additional facts UX, "Behind the scenes" page reorder with anchor links | Done |
+| 12 | Unit tests — 40 tests across 7 classes, spring-boot-starter-test | Done |
+| 13 | Refactor — layered packages (config/model/agent/result/web), BaseAgent, AgentResult base class | Done |
 
 ---
 
@@ -123,17 +125,29 @@ story-of-lifetime/
         │       └── architecture.html
         └── java/com/rajivnarula/storyoflifetime/
             ├── Main.java
-            ├── StoryController.java
-            ├── StoryRequest.java / StoryResponse.java
-            ├── FactGenerateRequest.java
-            ├── ExplainRequest.java
-            ├── AppConfig.java
-            ├── WorldModel.java
-            ├── FactGeneratorAgent.java / FactGeneratorResult.java
-            ├── PlannerAgent.java  / PlannerResult.java
-            ├── CriticAgent.java   / CriticResult.java
-            ├── WriterAgent.java   / WriterResult.java
-            └── ExplainerAgent.java / ExplainerResult.java
+            ├── config/
+            │   └── AppConfig.java
+            ├── model/
+            │   ├── WorldModel.java
+            │   ├── FactGenerateRequest.java
+            │   ├── StoryRequest.java / StoryResponse.java
+            │   └── ExplainRequest.java
+            ├── agent/
+            │   ├── BaseAgent.java          ← shared HTTP, prompt loading, cost calc
+            │   ├── FactGeneratorAgent.java
+            │   ├── PlannerAgent.java
+            │   ├── CriticAgent.java
+            │   ├── WriterAgent.java
+            │   └── ExplainerAgent.java
+            ├── result/
+            │   ├── AgentResult.java        ← shared token/cost/elapsed fields
+            │   ├── FactGeneratorResult.java
+            │   ├── PlannerResult.java
+            │   ├── CriticResult.java
+            │   ├── WriterResult.java
+            │   └── ExplainerResult.java
+            └── web/
+                └── StoryController.java
 ```
 
 ---

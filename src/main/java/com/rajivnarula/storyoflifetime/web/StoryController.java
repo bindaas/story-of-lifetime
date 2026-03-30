@@ -1,5 +1,9 @@
-package com.rajivnarula.storyoflifetime;
+package com.rajivnarula.storyoflifetime.web;
 
+import com.rajivnarula.storyoflifetime.agent.*;
+import com.rajivnarula.storyoflifetime.config.AppConfig;
+import com.rajivnarula.storyoflifetime.model.*;
+import com.rajivnarula.storyoflifetime.result.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +25,8 @@ public class StoryController {
     @PostMapping("/generate-facts")
     public ResponseEntity<?> generateFacts(@RequestBody FactGenerateRequest request) {
         try {
-            AppConfig            config    = new AppConfig();
-            FactGeneratorAgent   generator = new FactGeneratorAgent(config);
+            AppConfig          config    = new AppConfig();
+            FactGeneratorAgent generator = new FactGeneratorAgent(config);
 
             FactGeneratorResult result = generator.generate(
                     request.getStartState().trim(),

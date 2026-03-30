@@ -1,11 +1,11 @@
-package com.rajivnarula.storyoflifetime;
+package com.rajivnarula.storyoflifetime.config;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * AppConfig loads defaults from system.properties.
+ * Loads agent settings from system.properties.
  * Supports separate model + temperature for all five agents.
  */
 public class AppConfig {
@@ -26,7 +26,7 @@ public class AppConfig {
 
     private static final String PROPS_FILE = "system.properties";
 
-    /** Default constructor — reads from system.properties */
+    /** Default constructor — reads all values from system.properties */
     public AppConfig() throws IOException {
         Properties props              = loadProps();
         this.factGeneratorModel       = props.getProperty("factgenerator.model",       "claude-sonnet-4-6");
@@ -44,7 +44,7 @@ public class AppConfig {
         this.maxTokens                = Integer.parseInt(props.getProperty("claude.max_tokens",           "2048"));
     }
 
-    /** Per-request constructor — values come from the browser form */
+    /** Per-request constructor — Planner/Critic/Writer values come from the browser form */
     public AppConfig(String plannerModel, double plannerTemperature,
                      String criticModel,  double criticTemperature,
                      String writerModel,  double writerTemperature,

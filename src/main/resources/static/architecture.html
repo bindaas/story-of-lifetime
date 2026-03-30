@@ -164,8 +164,11 @@
         Testing was also entirely human-driven. Every agent interaction was manually exercised across
         world types, contradiction levels, and story lengths. Edge cases — the Critic rejecting all
         three attempts, empty fact lists, very long generations — were caught and resolved through
-        hands-on use, not automated tests. The feedback loop between running the app and directing
-        the next change is where most of the product quality came from.
+        hands-on use. A unit test suite (40 tests, 7 classes) was added as the codebase matured, covering
+        configuration, request models, result classes, prompt templates, and the zero-fact short-circuit.
+        The decision to add tests, and the decision to refactor the flat package structure into layered
+        sub-packages, both came from the human side — as did the direction to extract shared agent
+        infrastructure into a base class once the duplication became visible.
       </p>
     </div>
 
@@ -283,6 +286,11 @@ graph TD
     <div class="decision">
       <strong>Creativity is derived, not user-controlled</strong>
       <p>Rather than exposing a separate creativity slider, creativity is derived automatically from the world type the user already picked. Fewer controls, more coherent output — grounded → low creativity, outlandish → high creativity.</p>
+    </div>
+
+    <div class="decision">
+      <strong>Layered packages over a flat structure</strong>
+      <p>The codebase started with all classes in a single flat package — acceptable early on, but increasingly hard to navigate as the agent count grew. Rajiv directed a structural refactoring into five sub-packages: <code>config</code>, <code>model</code>, <code>agent</code>, <code>result</code>, and <code>web</code>. At the same time, duplicated infrastructure across all five agents (OkHttp client setup, prompt loading, Claude API call, cost calculation) was extracted into a shared <code>BaseAgent</code> class, and the four common fields on every result class were pulled into a shared <code>AgentResult</code> base. Zero behaviour change — purely structural, with all 40 unit tests passing before and after.</p>
     </div>
   </div>
 
