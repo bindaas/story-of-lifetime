@@ -1,7 +1,7 @@
-package com.rajivnarula.storyoflifetime;
+package com.rajivnarula.storyoflifetime.model;
 
 /**
- * JSON payload sent from the browser form.
+ * JSON payload sent from the browser for the main generate endpoint.
  * Separate model + temperature for Planner, Critic, and Writer.
  */
 public class StoryRequest {

@@ -1,4 +1,4 @@
-package com.rajivnarula.storyoflifetime;
+package com.rajivnarula.storyoflifetime.model;
 
 import java.util.List;
 
@@ -102,6 +102,6 @@ public class StoryResponse {
     public double getWriterCostUsd()             { return writerCostUsd; }
     public long   getWriterElapsedMs()           { return writerElapsedMs; }
 
-    public double getTotalCostUsd()  { return plannerCostUsd + criticCostUsd + writerCostUsd; }
-    public long   getTotalElapsedMs(){ return plannerElapsedMs + criticElapsedMs + writerElapsedMs; }
+    public double getTotalCostUsd()   { return plannerCostUsd + criticCostUsd + writerCostUsd; }
+    public long   getTotalElapsedMs() { return plannerElapsedMs + criticElapsedMs + writerElapsedMs; }
 }

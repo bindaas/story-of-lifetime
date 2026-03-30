@@ -1,4 +1,4 @@
-package com.rajivnarula.storyoflifetime;
+package com.rajivnarula.storyoflifetime.model;
 
 import org.junit.jupiter.api.Test;
 

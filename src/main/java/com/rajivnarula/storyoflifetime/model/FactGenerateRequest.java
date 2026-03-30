@@ -1,4 +1,4 @@
-package com.rajivnarula.storyoflifetime;
+package com.rajivnarula.storyoflifetime.model;
 
 /**
  * JSON payload for the /api/generate-facts endpoint.
