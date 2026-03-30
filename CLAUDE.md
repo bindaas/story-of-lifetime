@@ -94,7 +94,7 @@ A single control that flows through both FactGeneratorAgent and WriterAgent:
 - outlandish  — different universe entirely (Game of Thrones, Star Trek, Dune)
 
 ## Prompt placeholders
-- factgenerator_prompt.txt — `{{START_STATE}}`, `{{END_STATE}}`, `{{CREATIVITY}}`, `{{CONTRADICTION}}`, `{{WORLD_TYPE}}`
+- factgenerator_prompt.txt — `{{START_STATE}}`, `{{END_STATE}}`, `{{CREATIVITY}}`, `{{CONTRADICTION}}`, `{{WORLD_TYPE}}`, `{{FACT_COUNT}}`
 - planner_prompt.txt — `{{START_STATE}}`, `{{END_STATE}}`, `{{FACTS}}`, `{{FEEDBACK_SECTION}}`
 - critic_prompt.txt  — `{{START_STATE}}`, `{{END_STATE}}`, `{{FACTS}}`, `{{OUTLINE}}`, `{{FEEDBACK_SECTION}}`
 - writer_prompt.txt  — `{{START_STATE}}`, `{{END_STATE}}`, `{{FACTS}}`, `{{OUTLINE}}`, `{{WORLD_TYPE}}`, `{{STORY_LENGTH}}`
